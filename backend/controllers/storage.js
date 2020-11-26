@@ -1,6 +1,8 @@
 const Good = require('../models/good');
+// @ts-ignore
 const fs = require('fs');
 
+// @ts-ignore
 exports.createGood = (req, res, next) => {
     const good = new Good({
         category: req.body.category.toLowerCase(),
@@ -21,12 +23,15 @@ exports.createGood = (req, res, next) => {
     );
 };
 
+// @ts-ignore
 exports.updateGood = (req, res, next) => {
     Good.findOne({ category: req.params.category.toLowerCase() }).then(
         (currentGood) => {
+            // @ts-ignore
             const newQuantity = parseInt(currentGood.quantity) + parseInt(req.body.delta);
             if (newQuantity < 0) {
                 return res.status(409).json({
+                    // @ts-ignore
                     message: `Quantity cannot be below zero, update aborted. Current quantity: ${currentGood.quantity}`
                 })
             }
@@ -60,6 +65,7 @@ exports.updateGood = (req, res, next) => {
     )
 };
 
+// @ts-ignore
 exports.getGood = (req, res, next) => {
     Good.findOne({ category: req.params.category.toLowerCase() })
         .then(
@@ -75,6 +81,7 @@ exports.getGood = (req, res, next) => {
         )
 }
 
+// @ts-ignore
 exports.deleteGood = (req, res, next) => {
     Good.findOne({ category: req.params.category.toLowerCase() }).then(
         (good) => {
@@ -98,6 +105,7 @@ exports.deleteGood = (req, res, next) => {
         })
 }
 
+// @ts-ignore
 exports.getAllGoods = (req, res, next) => {
     Good.find().then(
         (templates) => {
