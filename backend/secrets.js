@@ -1,0 +1,1 @@
+module.exports.mongoUrl = 'mongodb+srv://will:h2AA9oxwHA0d1QBO@cluster0.t3xgb.mongodb.net/dispensapp?retryWrites=true&w=majority';
