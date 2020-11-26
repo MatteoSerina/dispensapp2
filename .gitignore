@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Secrets
-./backend/secrets.js
+*.ignore.js

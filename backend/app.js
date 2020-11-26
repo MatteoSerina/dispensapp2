@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const secrets = require('./secrets');
+const secrets = require('./secrets.ignore');
 
 const catalogRoutes = require('./routes/catalog');
 const storageRoutes = require('./routes/storage');
