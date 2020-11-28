@@ -1,19 +1,28 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import AddItem from './AddItem';
+import RemoveItem from './RemoveItem';
 
-function Home() {    
-    return (
-        <div>
-        <h2>HELLO</h2>
-        <p>Cras facilisis urna ornare ex volutpat, et
-        convallis erat elementum. Ut aliquam, ipsum vitae
-        gravida suscipit, metus dui bibendum est, eget rhoncus nibh
-        metus nec massa. Maecenas hendrerit laoreet augue
-        nec molestie. Cum sociis natoque penatibus et magnis
-        dis parturient montes, nascetur ridiculus mus.</p>
- 
-        <p>Duis a turpis sed lacus dapibus elementum sed eu lectus.</p>
+const useStyles = makeStyles({
+  itemButton:{
+    marginLeft: "10vh",
+    marginRight: "10vh",
+    marginTop: "5vh",
+  }
+});
+
+function Home() {
+  const classes = useStyles();
+  return (
+    <div>
+      <div className={classes.itemButton}>
+        <AddItem />
       </div>
-    );
+      <div className={classes.itemButton}>
+        <RemoveItem />
+      </div>
+    </div>
+  );
 }
 
 export default Home;

@@ -11,6 +11,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { Divider, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
+import './DrawerMenu.css';
+
 import Home from '../home/Home';
 import Storage from '../storage/Storage';
 import Catalog from '../catalog/Catalog';
@@ -24,19 +26,19 @@ const DrawerMenu = (props) => {
             onKeyDown={props.toggleDrawer(false)}
         >
             <List>
-                <NavLink to="/" style={{ textDecoration: 'none' }}>
+                <NavLink to="/" className='MenuItem'>
                     <ListItem button key='Home'>
                         <ListItemIcon><HomeIcon /></ListItemIcon>
                         <ListItemText primary='Home' />
                     </ListItem>
                 </NavLink>
-                <NavLink to="/catalog" style={{ textDecoration: 'none' }}>
+                <NavLink to="/catalog" className='MenuItem'>
                     <ListItem button key='Catalogo'>
                         <ListItemIcon><MenuBookIcon /></ListItemIcon>
                         <ListItemText primary='Catalogo' />
                     </ListItem>
                 </NavLink>
-                <NavLink to="/storage" style={{ textDecoration: 'none' }}>
+                <NavLink to="/storage" className='MenuItem'>
                     <ListItem button key='Dispensa'>
                         <ListItemIcon><KitchenIcon /></ListItemIcon>
                         <ListItemText primary='Dispensa' />
