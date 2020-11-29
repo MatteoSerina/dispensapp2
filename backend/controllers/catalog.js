@@ -94,7 +94,7 @@ exports.deleteTemplate = (req, res, next) => {
         })
 }
 
-exports.getAllTemplates = (req, res, next) => {
+exports.getAllTemplates = (req, res, next) => {    
     Template.find().then(
         (templates) => {
             res.status(200).json(templates);
