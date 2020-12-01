@@ -32,16 +32,19 @@ const DrawerMenu = (props) => {
                         <ListItemText primary='Home' />
                     </ListItem>
                 </NavLink>
-                <NavLink to="/catalog" className='MenuItem'>
-                    <ListItem button key='Catalogo'>
-                        <ListItemIcon><MenuBookIcon /></ListItemIcon>
-                        <ListItemText primary='Catalogo' />
-                    </ListItem>
-                </NavLink>
                 <NavLink to="/storage" className='MenuItem'>
                     <ListItem button key='Dispensa'>
                         <ListItemIcon><KitchenIcon /></ListItemIcon>
                         <ListItemText primary='Dispensa' />
+                    </ListItem>
+                </NavLink>
+            </List>
+            <Divider />
+            <List>
+                <NavLink to="/catalog" className='MenuItem'>
+                    <ListItem button key='Catalogo'>
+                        <ListItemIcon><MenuBookIcon /></ListItemIcon>
+                        <ListItemText primary='Catalogo' />
                     </ListItem>
                 </NavLink>
             </List>

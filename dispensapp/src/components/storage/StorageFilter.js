@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
   },
-  barcodeInput: {
+  categoryInput: {
     width: '90%',
     height: '4em',
     marginLeft: '1em',
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CatalogFilter = (props) => {
+const StorageFilter = (props) => {
   const classes = useStyles();
 
   function handleChange(e) {
@@ -37,7 +37,7 @@ const CatalogFilter = (props) => {
       <form className={classes.filter} noValidate autoComplete="off">
         <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={1}>
           <Grid item sm={6}>
-            <TextField className={classes.barcodeInput} name="barcode" label="Barcode" variant="outlined" fullWidth onChange={handleChange} value={props.barcode}/>
+            <TextField className={classes.categoryInput} name="category" label="Categoria" variant="outlined" fullWidth onChange={handleChange} value={props.category}/>
           </Grid>
           <Grid item sm={6}>
             <Button className={classes.cameraButton} variant="contained" color="primary" onClick={() => { alert("Take picture") }}>
@@ -49,4 +49,4 @@ const CatalogFilter = (props) => {
   );
 }
 
-export default CatalogFilter;
+export default StorageFilter;
