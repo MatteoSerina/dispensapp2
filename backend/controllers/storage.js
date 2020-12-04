@@ -107,7 +107,7 @@ exports.deleteGood = (req, res, next) => {
 
 // @ts-ignore
 exports.getAllGoods = (req, res, next) => {
-    Good.find().then(
+    Good.find().sort({category: 1}).then(
         (templates) => {
             res.status(200).json(templates);
         }
