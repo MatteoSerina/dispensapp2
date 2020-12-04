@@ -52,7 +52,7 @@ const CatalogFilter = (props) => {
         </Box>
       </form>
       <div hidden={!isScanning}>
-        <BarcodeScanner onScan={handleScan} />
+        <BarcodeScanner onScan={handleScan} enableScanner={isScanning} />
       </div>
     </div>
   );
