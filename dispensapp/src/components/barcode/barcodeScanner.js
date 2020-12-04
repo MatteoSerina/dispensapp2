@@ -5,6 +5,7 @@ import config from './quaggaConfig.json';
 const BarcodeScanner = (props) => {
 
     function handleScan(data) {
+        Quagga.stop(); 
         play();
         props.onScan(data.codeResult.code);
     }
@@ -17,18 +18,23 @@ const BarcodeScanner = (props) => {
     }
 
     useEffect(() => {
-        Quagga.init(config, err => {
-            if (err) {
-                console.log(err, "error msg");
-            }
-            Quagga.start();
-            return () => {
-                Quagga.stop()
-            }
-        });
+        if (props.enableScanner) {
+            Quagga.init(config, err => {
+                if (err) {
+                    console.log(err, "error msg");
+                }
+                Quagga.start();
+                return () => {
+                    Quagga.stop()
+                }
+            });
 
-        Quagga.onDetected(handleScan);
-    }, []);
+            Quagga.onDetected(handleScan);
+        } else {
+            try { Quagga.stop(); }
+            catch (e) { }
+        }
+    });
 
     return (
         <div id="interactive" className="viewport" />
