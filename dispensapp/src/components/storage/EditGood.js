@@ -57,7 +57,7 @@ const EditGood = (props) => {
           <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={handleSave}>Salva</Button>
         </Grid>
         <Grid item xs={6}>
-          <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={handleCancel}>Annulla</Button>
+          <Button fullWidth variant="contained" color="default" className={classes.action} onClick={handleCancel}>Annulla</Button>
         </Grid>
       </Grid>
     </form>

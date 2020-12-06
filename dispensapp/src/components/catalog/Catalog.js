@@ -5,6 +5,8 @@ import CatalogFilter from './CatalogFilter';
 import CatalogCard from './CatalogCard';
 import axios from 'axios';
 import secrets from '../../api.secrets';
+import { useHistory } from 'react-router-dom'
+
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -18,22 +20,24 @@ function Catalog() {
   const [isLoading, setLoading] = useState(false);
   const [item, setItem] = useState();
   const [barcode, setBarcode] = useState('');
+  const history = useHistory()
+
+  const fetchCatalog = async () => {
+    setLoading(true);
+    axios.get(secrets.catalogBaseUrl).then(
+      (response) => {
+        setCatalog(response.data);
+        setLoading(false);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+        setLoading(false);
+      }
+    );
+  };
 
   useEffect(() => {
-    const fetchCatalog = async () => {
-      setLoading(true);
-      axios.get(secrets.catalogBaseUrl).then(
-        (response) => {
-          setCatalog(response.data);
-          setLoading(false);
-        }
-      ).catch(
-        (err) => {
-          console.error(err);
-          setLoading(false);
-        }
-      );
-    };
     fetchCatalog();
   }, []);
 
@@ -52,10 +56,11 @@ function Catalog() {
     })
   };
 
-  function handleSave(){
+  function handleSave() {
     setLoading(true);
     axios.put(secrets.catalogBaseUrl.concat(item._id), item).then(
       (response) => {
+        fetchCatalog();
         alert('Articolo salvato');
         setLoading(false);
       }
@@ -67,21 +72,32 @@ function Catalog() {
     );
   };
 
-  function handleDelete(){
-
-    alert('Articolo eliminato');
+  function handleDelete() {
+    setLoading(true);
+    axios.delete(secrets.catalogBaseUrl.concat(item._id), item).then(
+      (response) => {
+        history.push('/');
+        alert('Articolo eliminato');
+        setLoading(false);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+        setLoading(false);
+      }
+    );
   }
 
   return (
-    <div>      
+    <div>
       <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.container}>
         <Grid item xs={12}>
           <CatalogFilter barcode={barcode} onFilter={handleFilter} />
         </Grid>
         <Grid item xs={12}>
-          <CatalogCard item={item} barcode={barcode} onChange={handleChange} onSave={handleSave} onDelete={handleDelete}/>
+          <CatalogCard item={item} barcode={barcode} onChange={handleChange} onSave={handleSave} onDelete={handleDelete} />
         </Grid>
-      </Grid>      
+      </Grid>
     </div>
   );
 }

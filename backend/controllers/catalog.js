@@ -102,26 +102,25 @@ exports.updateTemplate = (req, res, next) => {
 }
 
 exports.deleteTemplate = (req, res, next) => {
-    Template.findOne({ barcode: req.params.barcode.toLowerCase() }).then(
-        (thing) => {
-            Template.deleteOne({ barcode: req.params.barcode.toLowerCase() }).then(
-                (result) => {
-                    if (result.deletedCount > 0) {
-                        res.status(200).json({
-                            message: 'Template deleted successfully'
-                        })
-                    } else {
-                        res.status(404).json({
-                            message: 'Template not found'
-                        })
-                    }
-                }
-            ).catch(
-                (error) => {
-                    res.status(400).json({ error: error })
-                }
-            )
-        })
+    Template.findByIdAndDelete(req.params.id).then(
+        (result) => {
+            console.log(result)
+            if (result) {
+                res.status(200).json({
+                    message: 'Template deleted successfully'
+                })
+            } else {
+                res.status(404).json({
+                    message: 'Template not found'
+                })
+            }
+        }
+    ).catch(
+        (error) => {
+            console.log(error);
+            res.status(400).json({ error: error })
+        }
+    )
 }
 
 exports.getAllTemplates = (req, res, next) => {

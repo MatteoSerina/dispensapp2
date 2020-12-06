@@ -14,6 +14,9 @@ const useStyles = makeStyles({
     marginLeft: '1em',
     marginRight: '1em',
   },
+  editGood: {
+    marginBottom: '2em',
+  }
 });
 
 const StorageCard = (props) => {
@@ -46,7 +49,9 @@ const StorageCard = (props) => {
           </Box>
         </CardContent>
       </Card>
+      <div style={{marginBottom: '2em', borderLeft: '1px', borderRight: '1px'}}>
       <EditGood good={props.good} onUpdate={handleUpdate} enabled={isEditing} editComplete={handleEdit}/>
+      </div>
     </div>
   );
 }
