@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import StorageList from './StorageList';
 import StorageFilter from './StorageFilter';
 import axios from 'axios';
+import secrets from '../../api.secrets';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -22,7 +23,7 @@ function Storage() {
 
   const fetchStorage = async () => {
     setLoading(true);
-    axios.get("http://localhost:3100/api/storage").then(
+    axios.get(secrets.storageBaseUrl).then(
       (response) => {
         setStorage(response.data);
         setLoading(false);
@@ -52,7 +53,7 @@ function Storage() {
     })
     const deltaQ = good.quantity - currentGood.quantity;
     setLoading(true);
-    axios.put("http://localhost:3100/api/storage/".concat(good.category), {
+    axios.put(secrets.storage.concat(good.category), {
       "delta": deltaQ
     }).then(
       (response) => {
@@ -68,7 +69,6 @@ function Storage() {
     )
 
   };
-
   return (
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.container}>
       <Grid item xs={12}>

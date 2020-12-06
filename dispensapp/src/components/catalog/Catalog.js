@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import CatalogFilter from './CatalogFilter';
 import CatalogCard from './CatalogCard';
 import axios from 'axios';
+import secrets from '../../api.secrets';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -21,7 +22,7 @@ function Catalog() {
   useEffect(() => {
     const fetchCatalog = async () => {
       setLoading(true);
-      axios.get("http://localhost:3100/api/catalog").then(
+      axios.get(secrets.catalogBaseUrl).then(
         (response) => {
           setCatalog(response.data);
           setLoading(false);
@@ -51,6 +52,26 @@ function Catalog() {
     })
   };
 
+  function handleSave(){
+    setLoading(true);
+    axios.put(secrets.catalogBaseUrl.concat(item._id), item).then(
+      (response) => {
+        alert('Articolo salvato');
+        setLoading(false);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+        setLoading(false);
+      }
+    );
+  };
+
+  function handleDelete(){
+
+    alert('Articolo eliminato');
+  }
+
   return (
     <div>      
       <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.container}>
@@ -58,7 +79,7 @@ function Catalog() {
           <CatalogFilter barcode={barcode} onFilter={handleFilter} />
         </Grid>
         <Grid item xs={12}>
-          <CatalogCard item={item} barcode={barcode} onChange={handleChange} />
+          <CatalogCard item={item} barcode={barcode} onChange={handleChange} onSave={handleSave} onDelete={handleDelete}/>
         </Grid>
       </Grid>      
     </div>

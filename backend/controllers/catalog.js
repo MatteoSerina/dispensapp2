@@ -59,11 +59,11 @@ exports.getTemplate = (req, res, next) => {
 }
 
 exports.updateTemplate = (req, res, next) => {
-    Template.findOne({ barcode: req.params.barcode.toLowerCase() }).then(
+    Template.findById(req.params.id).then(
         (currentTemplate) => {
             const template = new Template({
                 _id: currentTemplate.id,
-                barcode: req.params.barcode.toLowerCase(),
+                barcode: req.body.barcode.toLowerCase(),
                 category: req.body.category.toLowerCase(),
                 itemsPerPackage: req.body.itemsPerPackage
             });

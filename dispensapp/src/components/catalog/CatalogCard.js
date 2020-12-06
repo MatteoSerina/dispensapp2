@@ -6,6 +6,9 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import { Button, CardActions, Grid } from '@material-ui/core';
+import axios from 'axios';
+import secrets from '../../api.secrets';
+
 
 const useStyles = makeStyles({
   root: {
@@ -41,9 +44,7 @@ const useStyles = makeStyles({
 
 const CatalogCard = (props) => {
   const classes = useStyles();
-
   const { category = '', barcode = '', itemsPerPackage = '', imageUrl = '' } = props.item || {};
-  console.log(imageUrl)
 
   function handleChange(event) {
     const name = event.target.name;
@@ -52,7 +53,6 @@ const CatalogCard = (props) => {
       [name]: value
     });
   };
-
 
   return (
     <div>
@@ -76,10 +76,10 @@ const CatalogCard = (props) => {
           <CardActions>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={() => { alert("Articolo salvato") }}>Salva</Button>
+                <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={props.onSave}>Salva</Button>
               </Grid>
               <Grid item xs={6}>
-                <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={() => { alert("Articolo eliminato") }}>Elimina</Button>
+                <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={props.onDelete}>Elimina</Button>
               </Grid>
             </Grid>
           </CardActions>
