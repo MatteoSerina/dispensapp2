@@ -53,7 +53,7 @@ function Storage() {
     })
     const deltaQ = good.quantity - currentGood.quantity;
     setLoading(true);
-    axios.put(secrets.storage.concat(good.category), {
+    axios.put(secrets.storageBaseUrl.concat(good.category), {
       "delta": deltaQ
     }).then(
       (response) => {

@@ -9,7 +9,8 @@ import KitchenIcon from '@material-ui/icons/Kitchen';
 import HomeIcon from '@material-ui/icons/Home';
 import SettingsIcon from '@material-ui/icons/Settings';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import { Divider, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Divider, List, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
+import packageJson from '../../../package.json';
 
 import './DrawerMenu.css';
 
@@ -55,6 +56,10 @@ const DrawerMenu = (props) => {
                     <ListItemText primary='Impostazioni' />
                 </ListItem>
             </List>
+            <Divider />
+            <Typography variant="body2" style={{marginLeft: '1.5em', marginTop: '1em'}}>
+                Versione: {packageJson.version}
+            </Typography>
         </div>
     );
 
