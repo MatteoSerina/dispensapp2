@@ -25,8 +25,8 @@ exports.createGood = (req, res, next) => {
 
 // @ts-ignore
 exports.updateGood = (req, res, next) => {
-    Good.findOne({ category: req.params.category.toLowerCase() }).then(
-        (currentGood) => {
+    Good.findById(req.params.id).then(
+        (currentGood) => {         
             // @ts-ignore
             const newQuantity = parseInt(currentGood.quantity) + parseInt(req.body.delta);
             if (newQuantity < 0) {
@@ -37,10 +37,10 @@ exports.updateGood = (req, res, next) => {
             }
             const good = new Good({
                 _id: currentGood._id,
-                category: req.params.category.toLowerCase(),
+                category: currentGood.category.toLowerCase(),
                 quantity: newQuantity
-            });
-            Good.updateOne({ category: req.params.category.toLowerCase() }, good).then(
+            });            
+            Good.updateOne({ category: currentGood.category.toLowerCase() }, good).then(
                 (result) => {
                     if (result.n > 0) {
                         res.status(201).json({

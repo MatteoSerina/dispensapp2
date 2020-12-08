@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -6,9 +6,9 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import { Button, CardActions, Grid } from '@material-ui/core';
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import secrets from '../../api.secrets';
-
 
 const useStyles = makeStyles({
   root: {
@@ -42,9 +42,24 @@ const useStyles = makeStyles({
   },
 });
 
+const filter = createFilterOptions();
+
 const CatalogCard = (props) => {
   const classes = useStyles();
   const { category = '', barcode = '', itemsPerPackage = '', imageUrl = '' } = props.item || {};
+
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    axios.get(secrets.categoriesBaseUrl).then(
+      (response) => {
+        setCategories(response.data);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+      }
+    )
+  }, []);
 
   function handleChange(event) {
     const name = event.target.name;
@@ -65,7 +80,34 @@ const CatalogCard = (props) => {
             Articolo
           </Typography>
           <Typography variant="h5" component="h2">
-            <TextField required fullWidth inputProps={{ style: { textTransform: 'capitalize' } }} label="Categoria" name="category" value={category} onChange={handleChange} />
+            {/* <TextField required fullWidth inputProps={{ style: { textTransform: 'capitalize' } }} label="Categoria" name="category" value={category} onChange={handleChange} /> */}
+            <Autocomplete
+              value={category}
+              onChange={(event, newValue) => {
+                handleChange(event);
+              }}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                // Suggest the creation of a new value
+                if (params.inputValue !== '') {
+                  filtered.push(params.inputValue);
+                }
+                return filtered;
+              }}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              autoHighlight
+              autoSelect
+              id="category-autocomplete"
+              options={categories}
+              renderOption={(option) => option}
+              fullWidth
+              freeSolo
+              renderInput={(params) => (
+                <TextField {...params} required variant="standard" label="Categoria" name="category" />
+              )}
+            />
           </Typography>
           <Typography className={classes.pos} color="textSecondary">
             <TextField required fullWidth label="Barcode" name="barcode" value={barcode} onChange={handleChange} />
@@ -79,7 +121,12 @@ const CatalogCard = (props) => {
                 <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={props.onSave}>Salva</Button>
               </Grid>
               <Grid item xs={6}>
-                <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={props.onDelete}>Elimina</Button>
+                <div hidden={props.isCreate}>
+                  <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={props.onDelete}>Elimina</Button>
+                </div>
+                <div hidden={!props.isCreate}>
+                  <Button fullWidth variant="contained" color="default" className={classes.action} onClick={props.onCancel}>Annulla</Button>
+                </div>
               </Grid>
             </Grid>
           </CardActions>

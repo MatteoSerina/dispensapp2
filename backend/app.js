@@ -7,6 +7,7 @@ const secrets = require('./secrets.ignore');
 
 const catalogRoutes = require('./routes/catalog');
 const storageRoutes = require('./routes/storage');
+const categoryRoutes = require('./routes/categories');
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use(bodyParser.json());
 
 app.use('/api/catalog', catalogRoutes);
 app.use('/api/storage', storageRoutes);
+app.use('/api/categories', categoryRoutes);
 
 module.exports = app;
