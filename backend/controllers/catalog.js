@@ -130,30 +130,4 @@ exports.deleteItem = (req, res, next) => {
             });
         }
     )
-    // Good.findOne({ 'items.barcode': req.params.barcode.toLowerCase() }, { "items.$": 1 })
-    //     .then(
-    //         (good) => {
-    //             good.items.id(good.items[0]._id).remove();
-    //             console.log(good)
-    //             good.save().then(
-    //                 () => {
-    //                     res.status(20).json({
-    //                         message: `Item with barcode ${req.params.barcode} removed!`
-    //                     });
-    //                 }
-    //             ).catch(
-    //                 (error) => {
-    //                     res.status(400).json({
-    //                         error: error
-    //                     })
-    //                 }
-    //             )
-    //         }
-    //     ).catch(
-    //         (error) => {
-    //             res.status(400).json({
-    //                 error: error
-    //             })
-    //         }
-    //     )
 }
