@@ -11,6 +11,7 @@ const categoryRoutes = require('./routes/categories');
 
 const app = express();
 
+mongoose.set('useFindAndModify', false);
 mongoose.connect(secrets.mongoUrl)
     .then(() => {
         console.log('Successfully connected to MongoDB Atlas!');

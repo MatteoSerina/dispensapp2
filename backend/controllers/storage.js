@@ -36,7 +36,7 @@ exports.updateGood = (req, res, next) => {
                 })
             }
             const good = new Good({
-                _id: currentGood._id,
+                _id: currentGood._id,                
                 category: currentGood.category.toLowerCase(),
                 quantity: newQuantity
             });            
