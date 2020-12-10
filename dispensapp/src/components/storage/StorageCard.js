@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import EditGood from './EditGood';
 
 const useStyles = makeStyles({
   root: {
@@ -13,23 +14,26 @@ const useStyles = makeStyles({
     marginLeft: '1em',
     marginRight: '1em',
   },
+  editGood: {
+    marginBottom: '2em',
+  }
 });
 
 const StorageCard = (props) => {
   const classes = useStyles();
+  const [isEditing, setIsEditing] = useState(false);
 
-  function handleChange(event) {
-    const name = event.target.name;
-    const value = event.target.value;
-    props.onChange({
-      [name]: value
-    });
-  };
-
+  function handleUpdate(good) {
+    props.onUpdate(good);
+  }
+  
+  function handleEdit(){
+    setIsEditing(false);
+  }
 
   return (
     <div>
-      <Card className={classes.root} variant="outlined" onClick={() => { alert(`Item details: ${props.good.category}`) }}>
+      <Card className={classes.root} variant="outlined" onClick={() => { setIsEditing(!isEditing) }}>
         <CardContent>
           <Box display="flex" p={1}>
             <Box p={1} flexGrow={1}>
@@ -45,6 +49,9 @@ const StorageCard = (props) => {
           </Box>
         </CardContent>
       </Card>
+      <div style={{marginBottom: '2em', borderLeft: '1px', borderRight: '1px'}}>
+      <EditGood good={props.good} onUpdate={handleUpdate} enabled={isEditing} editComplete={handleEdit}/>
+      </div>
     </div>
   );
 }

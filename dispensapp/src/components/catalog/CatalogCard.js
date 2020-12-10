@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import { Button, CardActions } from '@material-ui/core';
+import { Button, CardActions, Grid } from '@material-ui/core';
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import axios from 'axios';
+import secrets from '../../api.secrets';
 
 const useStyles = makeStyles({
   root: {
@@ -29,13 +33,33 @@ const useStyles = makeStyles({
   },
   action: {
     marginTop: '1em',
-  }
+  },
+  media: {
+    marginTop: 12,
+    paddingTop: '100%',
+    borderRadius: "4px",
+    boxShadow: "0 5px 10px rgba(0, 0, 0, 0.19), 0 3px 3px rgba(0, 0, 0, 0.23)",
+  },
 });
+
+const filter = createFilterOptions();
 
 const CatalogCard = (props) => {
   const classes = useStyles();
+  const { category = '', barcode = '', itemsPerPackage = '', imageUrl = '' } = props.item || {};
 
-  const { category = '', barcode = '', itemsPerPackage = '' } = props.item || {};
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    axios.get(secrets.categoriesBaseUrl).then(
+      (response) => {
+        setCategories(response.data);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+      }
+    )
+  }, []);
 
   function handleChange(event) {
     const name = event.target.name;
@@ -44,7 +68,6 @@ const CatalogCard = (props) => {
       [name]: value
     });
   };
-
 
   return (
     <div>
@@ -55,20 +78,65 @@ const CatalogCard = (props) => {
         <CardContent>
           <Typography className={classes.title} color="textSecondary" gutterBottom>
             Articolo
-        </Typography>
+          </Typography>
           <Typography variant="h5" component="h2">
-            <TextField required inputProps={{ style: { textTransform: 'capitalize' } }} label="Categoria" name="category" value={category} onChange={handleChange} />
+            {/* <TextField required fullWidth inputProps={{ style: { textTransform: 'capitalize' } }} label="Categoria" name="category" value={category} onChange={handleChange} /> */}
+            <Autocomplete
+              value={category}
+              onChange={(event, newValue) => {
+                handleChange(event);
+              }}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                // Suggest the creation of a new value
+                if (params.inputValue !== '') {
+                  filtered.push(params.inputValue);
+                }
+                return filtered;
+              }}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              autoHighlight
+              autoSelect
+              id="category-autocomplete"
+              options={categories}
+              renderOption={(option) => option}
+              fullWidth
+              freeSolo
+              renderInput={(params) => (
+                <TextField {...params} required variant="standard" label="Categoria" name="category" />
+              )}
+            />
           </Typography>
           <Typography className={classes.pos} color="textSecondary">
-            <TextField required label="Barcode" name="barcode" value={barcode} onChange={handleChange} />
+            <TextField required fullWidth label="Barcode" name="barcode" value={barcode} onChange={handleChange} />
           </Typography>
           <Typography variant="body2" component="p">
-            <TextField required label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage} onChange={handleChange} />
+            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage} onChange={handleChange} />
           </Typography>
           <CardActions>
-            <Button variant="contained" color="primary" className={classes.action} onClick={() => { alert("Articolo salvato") }}>Salva</Button>
-            <Button variant="contained" color="secondary" className={classes.action} onClick={() => { alert("Articolo eliminato") }}>Elimina</Button>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={props.onSave}>Salva</Button>
+              </Grid>
+              <Grid item xs={6}>
+                <div hidden={props.isCreate}>
+                  <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={props.onDelete}>Elimina</Button>
+                </div>
+                <div hidden={!props.isCreate}>
+                  <Button fullWidth variant="contained" color="default" className={classes.action} onClick={props.onCancel}>Annulla</Button>
+                </div>
+              </Grid>
+            </Grid>
           </CardActions>
+          <div hidden={!imageUrl}>
+            <CardMedia
+              className={classes.media}
+              image={imageUrl}
+              title="Foto articolo"
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

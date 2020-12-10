@@ -6,7 +6,7 @@ const catalogController = require('../controllers/catalog');
 router.get('', catalogController.getAllTemplates);
 router.post('/', catalogController.createTemplate);
 router.get('/:barcode', catalogController.getTemplate);
-router.put('/:barcode', catalogController.updateTemplate)
-router.delete('/:barcode', catalogController.deleteTemplate)
+router.put('/:id', catalogController.updateTemplate)
+router.delete('/:id', catalogController.deleteTemplate)
 
 module.exports = router;

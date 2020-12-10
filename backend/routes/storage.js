@@ -5,8 +5,8 @@ const storageController = require('../controllers/storage');
 
 router.get('', storageController.getAllGoods);
 router.post('/', storageController.createGood);
-router.put('/:category', storageController.updateGood);
+router.put('/:id', storageController.updateGood);
 router.get('/:category', storageController.getGood);
-router.delete('/:category', storageController.deleteGood);
+router.delete('/:id', storageController.deleteGood);
 
 module.exports = router;

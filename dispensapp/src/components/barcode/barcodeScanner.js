@@ -8,9 +8,7 @@ const BarcodeScanner = (props) => {
         Quagga.stop(); 
         play();
         props.onScan(data.codeResult.code);
-    }
-
-    const { onDetected } = props;
+    }   
 
     let beep = new Audio("/beep.mp3");
     function play() {

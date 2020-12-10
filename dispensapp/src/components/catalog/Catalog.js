@@ -4,6 +4,10 @@ import Grid from '@material-ui/core/Grid';
 import CatalogFilter from './CatalogFilter';
 import CatalogCard from './CatalogCard';
 import axios from 'axios';
+import secrets from '../../api.secrets';
+import { useHistory } from 'react-router-dom'
+
+
 const useStyles = makeStyles((theme) => ({
   container: {
     marginTop: '2em',
@@ -16,22 +20,24 @@ function Catalog() {
   const [isLoading, setLoading] = useState(false);
   const [item, setItem] = useState();
   const [barcode, setBarcode] = useState('');
+  const history = useHistory()
+
+  const fetchCatalog = async () => {
+    setLoading(true);
+    axios.get(secrets.catalogBaseUrl).then(
+      (response) => {
+        setCatalog(response.data);
+        setLoading(false);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+        setLoading(false);
+      }
+    );
+  };
 
   useEffect(() => {
-    const fetchCatalog = async () => {
-      setLoading(true);
-      axios.get("http://192.168.42.226:3100/api/catalog").then(
-        (response) => {
-          setCatalog(response.data);
-          setLoading(false);
-        }
-      ).catch(
-        (err) => {
-          console.error(err);
-          setLoading(false);
-        }
-      );
-    };
     fetchCatalog();
   }, []);
 
@@ -50,24 +56,50 @@ function Catalog() {
     })
   };
 
+  function handleSave() {
+    setLoading(true);
+    axios.put(secrets.catalogBaseUrl.concat(item._id), item).then(
+      (response) => {
+        fetchCatalog();
+        alert('Articolo salvato');
+        setLoading(false);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+        setLoading(false);
+      }
+    );
+  };
+
+  function handleDelete() {
+    setLoading(true);
+    axios.delete(secrets.catalogBaseUrl.concat(item._id), item).then(
+      (response) => {
+        history.push('/');
+        alert('Articolo eliminato');
+        setLoading(false);
+      }
+    ).catch(
+      (err) => {
+        console.error(err);
+        setLoading(false);
+      }
+    );
+  }
+
   return (
-    <div>      
+    <div>
       <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.container}>
         <Grid item xs={12}>
           <CatalogFilter barcode={barcode} onFilter={handleFilter} />
         </Grid>
         <Grid item xs={12}>
-          <CatalogCard item={item} barcode={barcode} onChange={handleChange} />
+          <CatalogCard item={item} barcode={barcode} onChange={handleChange} onSave={handleSave} onDelete={handleDelete} />
         </Grid>
-      </Grid>      
+      </Grid>
     </div>
   );
 }
 
 export default Catalog;
-
-/*
-In base al barcode inserito nel CatalogFilter, si aggiorna lo stato barcode
-Con lo stato barcode aggiornato, chiamare API catalog/barcode. Il risultato aggiorna lo stato item
-*/
-//var CATALOG = [{"itemsPerPackage":18,"_id":"5fc01dc8f9190a1b9a12e57a","barcode":"bc123456","category":"carta igienica","__v":0},{"itemsPerPackage":5,"_id":"5fc38dc2daa774ff833d25ff","barcode":"abc456123","category":"swiffer","__v":0},{"itemsPerPackage":1,"_id":"5fc93901daa774ff833d2602","barcode":"5000394023352","category":"batteria a27","__v":0}];
