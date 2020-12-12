@@ -18,28 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateTemplate = (props) => {
   const classes = useStyles();
-  const [barcode, setBarcode] = useState(props.barcode);
-  const [item, setItem] = useState(props.item); 
-
-  function handleChange(changedProp) {
-    setItem(item => {
-      // Object.assign would also work
-      return { ...item, ...changedProp };
-    })
-  };
-
-  function handleSave() {
-    axios.post(secrets.catalogBaseUrl, item).then(
-      (response) => {
-        props.onSave(item);
-      }
-    ).catch(
-      (err) => {
-        alert(err);
-        console.log(err);
-      }
-    )
-  };
+  
 
   return (
     <div>
@@ -48,7 +27,7 @@ const CreateTemplate = (props) => {
           <TextField className={classes.barcodeInput} name="barcode" label="Barcode" variant="outlined" fullWidth onChange={handleChange} value={props.barcode} />
         </Grid> */}
         <Grid item xs={12}>
-          <CatalogCard item={item} barcode={barcode} onChange={handleChange} onSave={handleSave} onCancel={props.onCancel} isCreate />
+          <CatalogCard item={props.good} onChange={props.onChange} onSave={props.onSave} onCancel={props.onCancel} isCreate />
         </Grid>
       </Grid>
     </div>

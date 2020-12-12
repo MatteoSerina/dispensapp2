@@ -46,7 +46,7 @@ const filter = createFilterOptions();
 
 const CatalogCard = (props) => {
   const classes = useStyles();
-  var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item != undefined && props.item.items != undefined) ? props.item.items[0] : {} || {};
+  var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item !== undefined && props.item !== null && props.item.items !== undefined) ? props.item.items[0] : {} || {};
   var { category = '' } = props.item || {};
 
   const [categories, setCategories] = useState([]);
@@ -60,7 +60,7 @@ const CatalogCard = (props) => {
         console.error(err);
       }
     )
-  }, []);
+  }, [barcode]);
 
   function handleChange(event) {
     const name = event.target.name;

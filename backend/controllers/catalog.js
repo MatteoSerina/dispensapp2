@@ -26,8 +26,8 @@ exports.addItem = (req, res, next) => {
                 itemsPerPackage: req.body.itemsPerPackage,
                 imageUrl: imageUrl
             });
-            Good.findOne({ category: req.params.category }).then(
-                (good) => {
+            Good.findOne({ category: req.params.category.toLowerCase() }).then(
+                (good) => {               
                     good.items.push(item);
                     good.save().then(
                         () => {

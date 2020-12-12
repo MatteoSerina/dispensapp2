@@ -4,28 +4,35 @@ import AddItem from './AddItem';
 import RemoveItem from './RemoveItem';
 import BarcodeScanner from '../barcode/barcodeScanner';
 import { Button } from '@material-ui/core';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 import secrets from '../../api.secrets';
 import CreateTemplate from '../catalog/CreateTemplate';
 
 const useStyles = makeStyles({
   itemButton: {
+    marginTop: '5vh',
     marginLeft: "10vh",
     marginRight: "10vh",
   }
 });
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+var message = '';
 
 function Home() {
   const classes = useStyles();
 
   const [isScanning, setIsScanning] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [good, setGood] = useState({});
   const [barcode, setBarcode] = useState('');
-  let baseItem = {
-    "itemsPerPackage": 0,
-    "category": '',
-    "barcode": barcode
-  };
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
 
   function mockScan(data) {
     // const barcode = '5000394023352';
@@ -41,102 +48,115 @@ function Home() {
   function stopScan(barcode) {
     setIsScanning(false);
     setBarcode(barcode);
-    axios.get(secrets.catalogBaseUrl.concat(barcode)).then( //cerca template dato barcode
+    axios.get(secrets.catalogBaseUrl.concat(barcode)).then( //cerca good dato barcode
       (response) => {
-        //template esiste, aggiorna storage
-        const template = response.data;
-        axios.get(secrets.storageBaseUrl.concat(template.category)).then( //cerca good data category
-          (response) =>{
-            //good esiste, incrementa quantity
-            const good = response.data;
-            axios.put(secrets.storageBaseUrl.concat(good._id), {
-              "delta": template.itemsPerPackage
-            }).then(
-              (response) => {
-                // alert(`${template.category} + ${template.itemsPerPackage}`);
-                console.log(response);
-              }
-            ).catch(
-              (err) => {                
-                console.error(err);
-              }
-            )
+        //item esiste, incrementa good quantity
+        setGood(response.data);
+        axios.put(secrets.storageBaseUrl.concat(response.data._id), {
+          "delta": response.data.items[0].itemsPerPackage
+        }).then(
+          (response) => {
+            console.log(response.data);
+            message = 'Articolo aggiunto';
+            setShowSuccessMessage(true);
           }
         ).catch(
           (err) => {
-            //good non esiste, crea good con qty = template.itemsPerPackage
-            console.log(err);
-            console.log(template)
-            const good = {
-              "category": template.category,
-              "quantity": template.itemsPerPackage,
-            };
-            axios.post(secrets.storageBaseUrl, good).then(
-              (response) => {
-                console.log(response);
-              }
-            ).catch(
-              (err) => {
-                console.error(err);
-              }
-            );
+            console.error(err);
           }
         )
-        }        
+      }
     ).catch(
       (err) => {
-        //template non esiste, crea template
         console.log(err);
-        baseItem.barcode = barcode;
+        //good non esiste, crea good con qty = item.itemsPerPackage + item
+        setGood({
+          "category": "",
+          "quantity": 0,
+          "items": [
+            {
+              "itemsPerPackage": 0,
+              "barcode": barcode,
+            }
+          ]
+        });
         setIsCreating(true);
       }
     )
   }
 
-  function handleSaveNewTemplate(template) {
+  function handleSaveNewItem() {
     setIsCreating(false);
-    axios.get(secrets.storageBaseUrl.concat(template.category)).then(
+    axios.get(secrets.storageBaseUrl.concat(escape(good.category))).then(
       (response) => {
-        console.log(response)
-        axios.put(secrets.storageBaseUrl.concat(response.data._id), {
-          "delta": template.itemsPerPackage
-        }).then(
-          (response) => {
-            // alert(`${template.category} + ${template.itemsPerPackage}`);
-            console.log(response);
-          }
-        ).catch(
-          (err) => {
-            console.error(err);
-          }
-        )
+        if (response.data === null) {
+          //Good non esiste, crea good
+          axios.post(secrets.storageBaseUrl, {
+            "category": good.category,
+            "quantity": good.items[0].itemsPerPackage,
+          }).then(
+            (response) => {
+              //Agguingi item
+              axios.post(secrets.catalogBaseUrl.concat(escape(good.category)), {
+                "itemsPerPackage": good.items[0].itemsPerPackage,
+                "barcode": good.items[0].barcode
+              }).then(
+                () => {
+                  message = 'Articolo aggiunto';
+                  setShowSuccessMessage(true);
+                }
+              ).catch((err) => { console.error(err) });
+            }
+          ).catch((err) => { console.error(err) });
+        } else {
+          //Good esiste, aggiungi item
+          const storedGood = response.data;
+          axios.post(secrets.catalogBaseUrl.concat(escape(storedGood.category)), {
+            "itemsPerPackage": good.items[0].itemsPerPackage,
+            "barcode": good.items[0].barcode
+          }).then(
+            (response) => {
+              //Incrementa quantità good
+              axios.put(secrets.storageBaseUrl.concat(storedGood._id), {
+                "delta": good.items[0].itemsPerPackage
+              }).then(
+                () => {
+                  message = 'Articolo aggiunto';
+                  setShowSuccessMessage(true);
+                }
+              ).catch((err) => { console.log(err) });
+            }
+          ).catch((err) => { console.error(err) });
+        }
       }
-    ).catch(
-      (err) => {
-        const good = {
-          "category": template.category,
-          "quantity": template.itemsPerPackage,
-        };
-        axios.post(secrets.storageBaseUrl, good).then(
-          (response) => {
-            console.log(response);
-          }
-        ).catch(
-          (err) => {
-            console.error(err);
-          }
-        );
-      }
-    )
+    ).catch((err) => { console.error(err) });
   }
 
-  function handleAbortNewTemplate() {
+  function handleNewItemChange(changedProp) {
+    if (changedProp.barcode !== undefined) {
+      let newGood = JSON.parse(JSON.stringify(good));
+      let newItems = [...newGood.items];
+      newGood.items[0] = { ...newItems[0], barcode: changedProp.barcode };
+      setGood(newGood);
+    } else if (changedProp.itemsPerPackage !== undefined) {
+      let newGood = JSON.parse(JSON.stringify(good));
+      let newItems = [...newGood.items];
+      newGood.items[0] = { ...newItems[0], itemsPerPackage: changedProp.itemsPerPackage };
+      setGood(newGood);
+    } else {
+      setGood(good => {
+        // Object.assign would also work
+        return { ...good, ...changedProp };
+      })
+    }
+  }
+
+  function handleAbortNewItem() {
     setIsCreating(false);
   }
 
   return (
     <div>
-      <Button variant="contained" color="primary" className={classes.itemButton} onClick={() => { setIsScanning(false); setIsCreating(false) }}>Stop scanning</Button>
       <div hidden={isScanning || isCreating}>
         <div className={classes.itemButton}>
           <AddItem onClick={mockScan} />
@@ -149,7 +169,14 @@ function Home() {
         <BarcodeScanner onScan={stopScan} enableScanner={isScanning} />
       </div>
       <div hidden={!isCreating}>
-        <CreateTemplate barcode={barcode} item={baseItem} onSave={handleSaveNewTemplate} onCancel={handleAbortNewTemplate} />
+        <CreateTemplate barcode={barcode} good={good} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
+      </div>
+      <div>
+        <Snackbar open={showSuccessMessage} autoHideDuration={1000} onClose={() => { setShowSuccessMessage(false) }}>
+          <Alert onClose={() => { setShowSuccessMessage(false) }} severity="success">
+            {message}
+          </Alert>
+        </Snackbar>
       </div>
     </div>
   );
