@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import AddItem from './AddItem';
 import RemoveItem from './RemoveItem';
 import BarcodeScanner from '../barcode/barcodeScanner';
-import { Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
@@ -27,6 +26,7 @@ var message = '';
 function Home() {
   const classes = useStyles();
 
+  const [movement, setMovement] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [good, setGood] = useState({});
@@ -35,21 +35,23 @@ function Home() {
   const [showErrorMessage, setShowErrorMessage] = useState(false);
 
 
-  function mockScan(data) {
-    // const barcode = '5000394023352';
-    const barcode = '123';
-    //addItem(barcode);
-    removeItem(barcode);
+  function movementSelector(movement) {
+    setMovement(movement);
+    setIsScanning(true);
   }
 
-  function startScan(data) {
-    setIsScanning(true);
-    //props.onFilter(data);
+  function handleScan(barcode) {
+    setIsScanning(false);
+    setBarcode(barcode);
+    if (movement === 'add') {
+      addItem(barcode);
+    }
+    if (movement === 'remove') {
+      removeItem(barcode);
+    }
   }
 
   function addItem(barcode) {
-    setIsScanning(false);
-    setBarcode(barcode);
     axios.get(secrets.catalogBaseUrl.concat(barcode)).then( //cerca good dato barcode
       (response) => {
         //item esiste, incrementa good quantity
@@ -59,7 +61,7 @@ function Home() {
         }).then(
           (response) => {
             console.log(response.data);
-            message = 'Articolo aggiunto';
+            message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto`;
             setShowSuccessMessage(true);
           }
         ).catch(
@@ -88,10 +90,9 @@ function Home() {
   }
 
   function removeItem(barcode) {
-    setIsScanning(false);
-    setBarcode(barcode);
     axios.get(secrets.catalogBaseUrl.concat(barcode)).then(
       (response) => {
+        setGood(response.data);
         if (response.data.quantity < response.data.items[0].itemsPerPackage) {
           message = 'Operazione annullata per giacenza negativa';
           setShowErrorMessage(true);
@@ -101,7 +102,7 @@ function Home() {
           "delta": deltaValue
         }).then(
           () => {
-            message = 'Articolo rimosso';
+            message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} rimosso`;
             setShowSuccessMessage(true);
           }
         ).catch((err) => { console.error(err) });
@@ -109,7 +110,8 @@ function Home() {
     ).catch(
       (err) => {
         console.error(err)
-        alert('Articolo non trovato');
+        message = `Articolo non trovato`;
+        setShowErrorMessage(true);
       }
     )
   }
@@ -131,7 +133,7 @@ function Home() {
                 "barcode": good.items[0].barcode
               }).then(
                 () => {
-                  message = 'Articolo aggiunto';
+                  message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto`;
                   setShowSuccessMessage(true);
                 }
               ).catch((err) => { console.error(err) });
@@ -150,7 +152,7 @@ function Home() {
                 "delta": good.items[0].itemsPerPackage
               }).then(
                 () => {
-                  message = 'Articolo aggiunto';
+                  message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto`;
                   setShowSuccessMessage(true);
                 }
               ).catch((err) => { console.log(err) });
@@ -188,20 +190,20 @@ function Home() {
     <div>
       <div hidden={isScanning || isCreating}>
         <div className={classes.itemButton}>
-          <AddItem onClick={mockScan} />
+          <AddItem onClick={() => { movementSelector('add') }} />
         </div>
         <div className={classes.itemButton}>
-          <RemoveItem onClick={mockScan} />
+          <RemoveItem onClick={() => { movementSelector('remove') }} />
         </div>
       </div>
       <div hidden={!isScanning}>
-        <BarcodeScanner onScan={addItem} enableScanner={isScanning} />
+        <BarcodeScanner onScan={handleScan} enableScanner={isScanning} />
       </div>
       <div hidden={!isCreating}>
         <CreateTemplate barcode={barcode} good={good} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
       </div>
       <div>
-        <Snackbar open={showSuccessMessage} autoHideDuration={1000} onClose={() => { setShowSuccessMessage(false) }}>
+        <Snackbar open={showSuccessMessage} autoHideDuration={2000} onClose={() => { setShowSuccessMessage(false) }}>
           <Alert onClose={() => { setShowSuccessMessage(false) }} severity="success">
             {message}
           </Alert>
