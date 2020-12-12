@@ -46,7 +46,8 @@ const filter = createFilterOptions();
 
 const CatalogCard = (props) => {
   const classes = useStyles();
-  const { category = '', barcode = '', itemsPerPackage = '', imageUrl = '' } = props.item || {};
+  var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item != undefined && props.item.items != undefined) ? props.item.items[0] : {} || {};
+  var { category = '' } = props.item || {};
 
   const [categories, setCategories] = useState([]);
   useEffect(() => {
@@ -110,10 +111,10 @@ const CatalogCard = (props) => {
             />
           </Typography>
           <Typography className={classes.pos} color="textSecondary">
-            <TextField required fullWidth label="Barcode" name="barcode" value={barcode} onChange={handleChange} />
+            <TextField required fullWidth label="Barcode" name="barcode" value={barcode || ''} onChange={handleChange} />
           </Typography>
           <Typography variant="body2" component="p">
-            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage} onChange={handleChange} />
+            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 0} onChange={handleChange} />
           </Typography>
           <CardActions>
             <Grid container spacing={2}>

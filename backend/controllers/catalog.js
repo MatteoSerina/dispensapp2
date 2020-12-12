@@ -15,10 +15,16 @@ async function addImageUrl(item) {
 exports.addItem = (req, res, next) => {
     client.search(req.body.barcode.toLowerCase(), options).then(
         (images) => {
+            let imageUrl;
+            try {
+                imageUrl = images[0].url;
+            } catch (error) {
+                imageUrl = null;
+            }
             const item = new Item({
                 barcode: req.body.barcode.toLowerCase(),
                 itemsPerPackage: req.body.itemsPerPackage,
-                imageUrl: images[0].url
+                imageUrl: imageUrl
             });
             Good.findOne({ category: req.params.category }).then(
                 (good) => {
@@ -31,6 +37,7 @@ exports.addItem = (req, res, next) => {
                         }
                     ).catch(
                         (error) => {
+                            console.error(error);
                             res.status(400).json({
                                 error: error
                             })
@@ -39,6 +46,7 @@ exports.addItem = (req, res, next) => {
                 }
             ).catch(
                 (error) => {
+                    console.error(error);
                     res.status(404).json({
                         error: error
                     });
@@ -47,6 +55,7 @@ exports.addItem = (req, res, next) => {
         }
     ).catch(
         (error) => {
+            console.error(error);
             res.status(400).json({
                 error: error
             });
@@ -56,10 +65,14 @@ exports.addItem = (req, res, next) => {
 
 
 exports.getGoodByBarcode = (req, res, next) => {
-    Good.findOne({ 'items.barcode': req.params.barcode.toLowerCase() })
+    Good.findOne({ 'items.barcode': req.params.barcode.toLowerCase() }, "category quantity items.$:1")
         .then(
             (good) => {
-                res.status(200).json(good);
+                if (good === null) {
+                    res.status(404).json({ message: 'Item not found' });
+                } else {
+                    res.status(200).json(good);
+                }
             }
         ).catch(
             (error) => {

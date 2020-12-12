@@ -4,7 +4,6 @@ const Good = require('../models/good');
 exports.getCategories = (req, res, next) => {
     Good.distinct('category').then(
         (categories) => {
-            console.log(categories);
             res.status(200).json(categories);
         }
     ).catch(
