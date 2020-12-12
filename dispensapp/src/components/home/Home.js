@@ -32,12 +32,14 @@ function Home() {
   const [good, setGood] = useState({});
   const [barcode, setBarcode] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
 
 
   function mockScan(data) {
     // const barcode = '5000394023352';
     const barcode = '123';
-    stopScan(barcode);
+    //addItem(barcode);
+    removeItem(barcode);
   }
 
   function startScan(data) {
@@ -45,7 +47,7 @@ function Home() {
     //props.onFilter(data);
   }
 
-  function stopScan(barcode) {
+  function addItem(barcode) {
     setIsScanning(false);
     setBarcode(barcode);
     axios.get(secrets.catalogBaseUrl.concat(barcode)).then( //cerca good dato barcode
@@ -81,6 +83,33 @@ function Home() {
           ]
         });
         setIsCreating(true);
+      }
+    )
+  }
+
+  function removeItem(barcode) {
+    setIsScanning(false);
+    setBarcode(barcode);
+    axios.get(secrets.catalogBaseUrl.concat(barcode)).then(
+      (response) => {
+        if (response.data.quantity < response.data.items[0].itemsPerPackage) {
+          message = 'Operazione annullata per giacenza negativa';
+          setShowErrorMessage(true);
+        }
+        const deltaValue = -1 * response.data.items[0].itemsPerPackage;
+        axios.put(secrets.storageBaseUrl.concat(response.data._id), {
+          "delta": deltaValue
+        }).then(
+          () => {
+            message = 'Articolo rimosso';
+            setShowSuccessMessage(true);
+          }
+        ).catch((err) => { console.error(err) });
+      }
+    ).catch(
+      (err) => {
+        console.error(err)
+        alert('Articolo non trovato');
       }
     )
   }
@@ -162,11 +191,11 @@ function Home() {
           <AddItem onClick={mockScan} />
         </div>
         <div className={classes.itemButton}>
-          <RemoveItem />
+          <RemoveItem onClick={mockScan} />
         </div>
       </div>
       <div hidden={!isScanning}>
-        <BarcodeScanner onScan={stopScan} enableScanner={isScanning} />
+        <BarcodeScanner onScan={addItem} enableScanner={isScanning} />
       </div>
       <div hidden={!isCreating}>
         <CreateTemplate barcode={barcode} good={good} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
@@ -174,6 +203,11 @@ function Home() {
       <div>
         <Snackbar open={showSuccessMessage} autoHideDuration={1000} onClose={() => { setShowSuccessMessage(false) }}>
           <Alert onClose={() => { setShowSuccessMessage(false) }} severity="success">
+            {message}
+          </Alert>
+        </Snackbar>
+        <Snackbar open={showErrorMessage} autoHideDuration={2000} onClose={() => { setShowErrorMessage(false) }}>
+          <Alert onClose={() => { setShowErrorMessage(false) }} severity="error">
             {message}
           </Alert>
         </Snackbar>

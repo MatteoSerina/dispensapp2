@@ -24,10 +24,10 @@ const useStyles = makeStyles({
   });
 
 
-function RemoveItem() {
+const RemoveItem = (props) => {
     const classes = useStyles();
     return (
-        <Card onClick={() => { alert("Remove item") }} className={classes.card}>
+        <Card onClick={() => props.onClick()} className={classes.card}>
             <Box
                 display="flex"
                 alignItems="center"
