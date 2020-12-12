@@ -3,10 +3,9 @@ const router = express.Router();
 
 const catalogController = require('../controllers/catalog');
 
-router.get('', catalogController.getAllTemplates);
-router.post('/', catalogController.createTemplate);
-router.get('/:barcode', catalogController.getTemplate);
-router.put('/:id', catalogController.updateTemplate)
-router.delete('/:id', catalogController.deleteTemplate)
+router.get('/:barcode', catalogController.getGoodByBarcode);
+router.post('/:category', catalogController.addItem);
+router.put('/:barcode', catalogController.updateItem);
+router.delete('/:barcode', catalogController.deleteItem);
 
 module.exports = router;

@@ -5,6 +5,7 @@ import config from './quaggaConfig.json';
 const BarcodeScanner = (props) => {
 
     function handleScan(data) {
+        Quagga.offDetected();
         Quagga.stop(); 
         play();
         props.onScan(data.codeResult.code);

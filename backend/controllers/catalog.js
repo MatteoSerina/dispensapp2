@@ -1,34 +1,53 @@
-const Template = require('../models/template');
+const Good = require('../models/good');
+const Item = require('../models/item');
 const imageSearch = require('image-search-google');
 const secrets = require('../secrets.ignore');
 
 const client = new imageSearch(secrets.googleCx, secrets.googleApiKey);
 const options = { num: 1, searchType: 'image', };
 
-async function addImageUrl(template) {
-    const images = await client.search(template.barcode, options);
-    template.imageUrl = images[0].url;
-    return template;
+async function addImageUrl(item) {
+    const images = await client.search(item.barcode, options);
+    item.imageUrl = images[0].url;
+    return item;
 }
 
-exports.createTemplate = (req, res, next) => {
-    client.search(req.body.barcode, options).then(
+exports.addItem = (req, res, next) => {
+    client.search(req.body.barcode.toLowerCase(), options).then(
         (images) => {
-            const template = new Template({
+            let imageUrl;
+            try {
+                imageUrl = images[0].url;
+            } catch (error) {
+                imageUrl = null;
+            }
+            const item = new Item({
                 barcode: req.body.barcode.toLowerCase(),
-                category: req.body.category.toLowerCase(),
                 itemsPerPackage: req.body.itemsPerPackage,
-                imageUrl: images[0].url
+                imageUrl: imageUrl
             });
-            template.save().then(
-                () => {
-                    res.status(201).json({
-                        message: 'Template created successfully!'
-                    });
+            Good.findOne({ category: req.params.category.toLowerCase() }).then(
+                (good) => {               
+                    good.items.push(item);
+                    good.save().then(
+                        () => {
+                            res.status(201).json({
+                                message: `Item with barcode ${req.body.barcode} added to category ${req.params.category}!`
+                            });
+                        }
+                    ).catch(
+                        (error) => {
+                            console.error(error);
+                            res.status(400).json({
+                                error: error
+                            })
+                        }
+                    )
                 }
             ).catch(
                 (error) => {
-                    res.status(400).json({
+                    console.error(error);
+                    res.status(404).json({
                         error: error
                     });
                 }
@@ -36,6 +55,7 @@ exports.createTemplate = (req, res, next) => {
         }
     ).catch(
         (error) => {
+            console.error(error);
             res.status(400).json({
                 error: error
             });
@@ -43,11 +63,16 @@ exports.createTemplate = (req, res, next) => {
     );
 };
 
-exports.getTemplate = (req, res, next) => {
-    Template.findOne({ barcode: req.params.barcode.toLowerCase() })
+
+exports.getGoodByBarcode = (req, res, next) => {
+    Good.findOne({ 'items.barcode': req.params.barcode.toLowerCase() }, "category quantity items.$:1")
         .then(
-            (template) => {
-                res.status(200).json(template);
+            (good) => {
+                if (good === null) {
+                    res.status(404).json({ message: 'Item not found' });
+                } else {
+                    res.status(200).json(good);
+                }
             }
         ).catch(
             (error) => {
@@ -58,81 +83,64 @@ exports.getTemplate = (req, res, next) => {
         )
 }
 
-exports.updateTemplate = (req, res, next) => {
-    Template.findById(req.params.id).then(
-        (currentTemplate) => {
-            const template = new Template({
-                _id: currentTemplate.id,
-                barcode: req.body.barcode.toLowerCase(),
-                category: req.body.category.toLowerCase(),
-                itemsPerPackage: req.body.itemsPerPackage
-            });
-            addImageUrl(template).then(
-                (template) => {
-                    console.log(template);
-                    Template.updateOne({ _id: template._id }, template).then(
-                        (result) => {
-                            if (result.n > 0) {
-                                res.status(201).json({
-                                    message: 'Template updated successfully'
-                                })
-                            } else {
-                                res.status(404).json({
-                                    message: 'Template not found'
-                                })
-                            }
-                        }
-                    ).catch(
-                        (error) => {
-                            res.status(400).json({ error: error })
-                        }
-                    )
+exports.updateItem = (req, res, next) => {
+    client.search(req.body.barcode.toLowerCase(), options).then(
+        (images) => {
+            Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase() }, {
+                '$set': {
+                    'items.$.barcode': req.body.barcode.toLowerCase(),
+                    'items.$.itemsPerPackage': req.body.itemsPerPackage,
+                    'items.$.imageUrl': images[0].url
                 }
-            ).catch(
-                (error) => {
-                    res.status(400).json({ error: error })
+            }, function (err, post) {
+                if (err) {
+                    res.status(404).json({
+                        message: `Item with barcode ${req.body.barcode.toLowerCase()} not found`
+                    })
+                } else {
+                    res.status(201).json({
+                        message: `Item with barcode ${req.body.barcode.toLowerCase()} updated successfully`
+                    });
                 }
-            )
-        }
-    ).catch(
-        (error) => {
-            res.status(400).json({ error: error })
-        }
-    )
-}
-
-exports.deleteTemplate = (req, res, next) => {
-    Template.findByIdAndDelete(req.params.id).then(
-        (result) => {
-            console.log(result)
-            if (result) {
-                res.status(200).json({
-                    message: 'Template deleted successfully'
-                })
-            } else {
-                res.status(404).json({
-                    message: 'Template not found'
+            })
+        }).catch((
+            (err) => {
+                console.log(err);
+                Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase() }, {
+                    '$set': {
+                        'items.$.barcode': req.body.barcode.toLowerCase(),
+                        'items.$.itemsPerPackage': req.body.itemsPerPackage,
+                    }
+                }, function (err, post) {
+                    if (err) {
+                        res.status(404).json({
+                            message: `Item with barcode ${req.body.barcode.toLowerCase()} not found`
+                        })
+                    } else {
+                        res.status(201).json({
+                            message: `Item with barcode ${req.body.barcode.toLowerCase()} updated successfully`
+                        });
+                    }
                 })
             }
-        }
-    ).catch(
-        (error) => {
-            console.log(error);
-            res.status(400).json({ error: error })
-        }
-    )
+        ))
 }
 
-exports.getAllTemplates = (req, res, next) => {
-    Template.find().sort({ category: 1 }).then(
-        (templates) => {
-            res.status(200).json(templates);
-        }
-    ).catch(
-        (error) => {
-            res.status(400).json({
-                error: error
-            })
+exports.deleteItem = (req, res, next) => {
+    Good.findOneAndUpdate(
+        { 'items.barcode': req.params.barcode.toLowerCase() },
+        { $pull: { items: { barcode: req.params.barcode.toLowerCase() } } },
+        { new: true },
+        function (error) {
+            if (error) {
+                console.log(error)
+                res.status(400).json({
+                    error: error
+                })
+            }
+            res.status(200).json({
+                message: `Item with barcode ${req.params.barcode} removed!`
+            });
         }
     )
 }

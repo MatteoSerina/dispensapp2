@@ -7,6 +7,6 @@ router.get('', storageController.getAllGoods);
 router.post('/', storageController.createGood);
 router.put('/:id', storageController.updateGood);
 router.get('/:category', storageController.getGood);
-router.delete('/:id', storageController.deleteGood);
+router.delete('/:category', storageController.deleteGood);
 
 module.exports = router;

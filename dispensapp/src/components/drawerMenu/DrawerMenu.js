@@ -50,13 +50,6 @@ const DrawerMenu = (props) => {
                 </NavLink>
             </List>
             <Divider />
-            <List>
-                <ListItem button key='Impostazioni'>
-                    <ListItemIcon><SettingsIcon /></ListItemIcon>
-                    <ListItemText primary='Impostazioni' />
-                </ListItem>
-            </List>
-            <Divider />
             <Typography variant="body2" style={{marginLeft: '1.5em', marginTop: '1em'}}>
                 Versione: {packageJson.version}
             </Typography>
