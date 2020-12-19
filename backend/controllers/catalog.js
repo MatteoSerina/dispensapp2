@@ -1,9 +1,9 @@
 const Good = require('../models/good');
 const Item = require('../models/item');
 const imageSearch = require('image-search-google');
-const secrets = require('../secrets.ignore');
+const config = require('../config');
 
-const client = new imageSearch(secrets.googleCx, secrets.googleApiKey);
+const client = new imageSearch(config.googleCx, config.googleApiKey);
 const options = { num: 1, searchType: 'image', };
 
 async function addImageUrl(item) {
@@ -26,8 +26,8 @@ exports.addItem = (req, res, next) => {
                 itemsPerPackage: req.body.itemsPerPackage,
                 imageUrl: imageUrl
             });
-            Good.findOne({ category: req.params.category.toLowerCase() }).then(
-                (good) => {               
+            Good.findOne({ category: req.params.category }).then(
+                (good) => {
                     good.items.push(item);
                     good.save().then(
                         () => {

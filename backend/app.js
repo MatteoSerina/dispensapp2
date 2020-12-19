@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const secrets = require('./secrets.ignore');
+const config = require('./config');
 
 const catalogRoutes = require('./routes/catalog');
 const storageRoutes = require('./routes/storage');
@@ -12,7 +12,7 @@ const categoryRoutes = require('./routes/categories');
 const app = express();
 
 mongoose.set('useFindAndModify', false);
-mongoose.connect(secrets.mongoUrl)
+mongoose.connect(config.mongoUrl)
     .then(() => {
         console.log('Successfully connected to MongoDB Atlas!');
     })
