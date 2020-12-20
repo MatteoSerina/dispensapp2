@@ -106,4 +106,3 @@ dist
 # Secrets
 *.ignore.js
 *.env
-backend/config.js
