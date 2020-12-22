@@ -6,7 +6,7 @@ import BarcodeScanner from '../barcode/barcodeScanner';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
-import secrets from '../../api.secrets';
+import * as config from '../../config';
 import CreateTemplate from '../catalog/CreateTemplate';
 
 const useStyles = makeStyles({
@@ -23,7 +23,11 @@ function Alert(props) {
 
 var message = '';
 
+
 function Home() {
+  const catalogBaseUrl = config.catalogBaseUrl(process.env.REACT_APP_API_URL);
+  const storageBaseUrl = config.storageBaseUrl(process.env.REACT_APP_API_URL);
+  
   const classes = useStyles();
 
   const [movement, setMovement] = useState('');
@@ -52,11 +56,11 @@ function Home() {
   }
 
   function addItem(barcode) {
-    axios.get(secrets.catalogBaseUrl.concat(barcode)).then( //cerca good dato barcode
+    axios.get(catalogBaseUrl.concat(barcode)).then( //cerca good dato barcode
       (response) => {
         //item esiste, incrementa good quantity
         setGood(response.data);
-        axios.put(secrets.storageBaseUrl.concat(response.data._id), {
+        axios.put(storageBaseUrl.concat(response.data._id), {
           "delta": response.data.items[0].itemsPerPackage
         }).then(
           (response) => {
@@ -90,7 +94,7 @@ function Home() {
   }
 
   function removeItem(barcode) {
-    axios.get(secrets.catalogBaseUrl.concat(barcode)).then(
+    axios.get(catalogBaseUrl.concat(barcode)).then(
       (response) => {
         setGood(response.data);
         if (response.data.quantity < response.data.items[0].itemsPerPackage) {
@@ -98,7 +102,7 @@ function Home() {
           setShowErrorMessage(true);
         }
         const deltaValue = -1 * response.data.items[0].itemsPerPackage;
-        axios.put(secrets.storageBaseUrl.concat(response.data._id), {
+        axios.put(storageBaseUrl.concat(response.data._id), {
           "delta": deltaValue
         }).then(
           () => {
@@ -118,17 +122,17 @@ function Home() {
 
   function handleSaveNewItem() {
     setIsCreating(false);
-    axios.get(secrets.storageBaseUrl.concat(escape(good.category))).then(
+    axios.get(storageBaseUrl.concat(escape(good.category))).then(
       (response) => {
         if (response.data === null) {
           //Good non esiste, crea good
-          axios.post(secrets.storageBaseUrl, {
+          axios.post(storageBaseUrl, {
             "category": good.category,
             "quantity": good.items[0].itemsPerPackage,
           }).then(
             (response) => {
               //Agguingi item
-              axios.post(secrets.catalogBaseUrl.concat(escape(good.category)), {
+              axios.post(catalogBaseUrl.concat(escape(good.category)), {
                 "itemsPerPackage": good.items[0].itemsPerPackage,
                 "barcode": good.items[0].barcode
               }).then(
@@ -142,13 +146,13 @@ function Home() {
         } else {
           //Good esiste, aggiungi item
           const storedGood = response.data;
-          axios.post(secrets.catalogBaseUrl.concat(escape(storedGood.category)), {
+          axios.post(catalogBaseUrl.concat(escape(storedGood.category)), {
             "itemsPerPackage": good.items[0].itemsPerPackage,
             "barcode": good.items[0].barcode
           }).then(
             (response) => {
               //Incrementa quantità good
-              axios.put(secrets.storageBaseUrl.concat(storedGood._id), {
+              axios.put(storageBaseUrl.concat(storedGood._id), {
                 "delta": good.items[0].itemsPerPackage
               }).then(
                 () => {

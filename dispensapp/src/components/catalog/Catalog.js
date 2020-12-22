@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CatalogFilter from './CatalogFilter';
@@ -6,7 +6,7 @@ import CatalogCard from './CatalogCard';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
-import secrets from '../../api.secrets';
+import * as config from '../../config';
 import { useHistory } from 'react-router-dom'
 
 function Alert(props) {
@@ -22,7 +22,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 function Catalog() {
+  const catalogBaseUrl = config.catalogBaseUrl(process.env.REACT_APP_API_URL);
+  
   const classes = useStyles();
   const [isLoading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -33,7 +36,7 @@ function Catalog() {
 
   function handleFilter(barcode) {
     setBarcode(barcode);
-    axios.get(secrets.catalogBaseUrl.concat(barcode)).then(
+    axios.get(catalogBaseUrl.concat(barcode)).then(
       (response) => {
         setItem(response.data);
       }
@@ -65,7 +68,7 @@ function Catalog() {
 
   function handleSave() {
     console.log(item)
-    axios.put(secrets.catalogBaseUrl.concat(item.items[0].barcode), {
+    axios.put(catalogBaseUrl.concat(item.items[0].barcode), {
       "itemsPerPackage": item.items[0].itemsPerPackage,
       "barcode": item.items[0].barcode
     }).then(
@@ -86,7 +89,7 @@ function Catalog() {
 
   function handleDelete() {
     setLoading(true);
-    axios.delete(secrets.catalogBaseUrl.concat(item.items[0].barcode)).then(
+    axios.delete(catalogBaseUrl.concat(item.items[0].barcode)).then(
       (response) => {
         setLoading(false);
         message = `Articolo eliminato`;

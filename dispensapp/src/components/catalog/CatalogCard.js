@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import { Button, CardActions, Grid } from '@material-ui/core';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
-import secrets from '../../api.secrets';
+import * as config from '../../config';
 
 const useStyles = makeStyles({
   root: {
@@ -44,14 +44,16 @@ const useStyles = makeStyles({
 
 const filter = createFilterOptions();
 
+
 const CatalogCard = (props) => {
+  const categoriesBaseUrl = config.categoriesBaseUrl(process.env.REACT_APP_API_URL);
   const classes = useStyles();
   var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item !== undefined && props.item !== null && props.item.items !== undefined) ? props.item.items[0] : {} || {};
   var { category = '' } = props.item || {};
 
   const [categories, setCategories] = useState([]);
   useEffect(() => {
-    axios.get(secrets.categoriesBaseUrl).then(
+    axios.get(categoriesBaseUrl).then(
       (response) => {
         setCategories(response.data);
       }
