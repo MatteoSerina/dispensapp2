@@ -115,8 +115,8 @@ const CatalogCard = (props) => {
           <Typography className={classes.pos} color="textSecondary">
             <TextField required fullWidth label="Barcode" name="barcode" type="number" value={barcode || ''} onChange={handleChange} />
           </Typography>
-          <Typography variant="body2" component="p">
-            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 0} onChange={handleChange} />
+          <Typography variant="body2">
+            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 1} InputProps={{ inputProps: { min: 1 } }} onChange={handleChange} />
           </Typography>
           <CardActions>
             <Grid container spacing={2}>
