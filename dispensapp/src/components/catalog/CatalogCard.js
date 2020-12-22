@@ -113,7 +113,7 @@ const CatalogCard = (props) => {
             />
           </Typography>
           <Typography className={classes.pos} color="textSecondary">
-            <TextField required fullWidth label="Barcode" name="barcode" value={barcode || ''} onChange={handleChange} />
+            <TextField required fullWidth label="Barcode" name="barcode" type="number" value={barcode || ''} onChange={handleChange} />
           </Typography>
           <Typography variant="body2" component="p">
             <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 0} onChange={handleChange} />

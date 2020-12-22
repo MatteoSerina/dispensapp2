@@ -42,7 +42,7 @@ const CatalogFilter = (props) => {
       <form className={classes.filter} noValidate autoComplete="off" hidden={isScanning}>
         <Box display="flex" p={1}>
           <Box p={1} flexGrow={1}>
-            <TextField className={classes.barcodeInput} name="barcode" label="Barcode" variant="outlined" fullWidth onChange={handleChange} value={props.barcode} />
+            <TextField className={classes.barcodeInput} name="barcode" label="Barcode" type="number" variant="outlined" fullWidth onChange={handleChange} value={props.barcode} />
           </Box>
           <Box p={1}>
             <Button className={classes.cameraButton} variant="contained" color="primary" onClick={() => { setIsScanning(true) }}>
