@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AddItem from './AddItem';
 import RemoveItem from './RemoveItem';
@@ -21,37 +21,48 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-var message = '';
-
-
 function Home() {
   const catalogBaseUrl = config.catalogBaseUrl(process.env.REACT_APP_API_URL);
   const storageBaseUrl = config.storageBaseUrl(process.env.REACT_APP_API_URL);
-  
+
   const classes = useStyles();
 
-  const [movement, setMovement] = useState('');
+  const barcode = useRef(null);
+  const movement = useRef(null);
+  const [good, setGood] = useState({});
   const [isScanning, setIsScanning] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
-  const [good, setGood] = useState({});
-  const [barcode, setBarcode] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
+  useEffect(() => {
+    switch (message.type) {
+      case 's':
+        setShowSuccessMessage(true);
+        break;
+      case 'e':
+        setShowErrorMessage(true);
+        break;
+      default:
+        break;
+    }
+  }, [message]);
 
-  function movementSelector(movement) {
-    setMovement(movement);
+  function movementSelector(mov) {
+    movement.current = mov;
     setIsScanning(true);
+    //handleScan('987654')
   }
 
-  function handleScan(barcode) {
+  function handleScan(bc) {
     setIsScanning(false);
-    setBarcode(barcode);
-    if (movement === 'add') {
-      addItem(barcode);
+    barcode.current = bc;
+    if (movement.current === 'add') {
+      addItem(barcode.current);
     }
-    if (movement === 'remove') {
-      removeItem(barcode);
+    if (movement.current === 'remove') {
+      removeItem(barcode.current);
     }
   }
 
@@ -59,14 +70,13 @@ function Home() {
     axios.get(catalogBaseUrl.concat(barcode)).then( //cerca good dato barcode
       (response) => {
         //item esiste, incrementa good quantity
-        setGood(response.data);
+        const curGood = response.data;
         axios.put(storageBaseUrl.concat(response.data._id), {
           "delta": response.data.items[0].itemsPerPackage
         }).then(
           (response) => {
             console.log(response.data);
-            message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto`;
-            setShowSuccessMessage(true);
+            setMessage({ type: 's', text: `${curGood.category.charAt(0).toUpperCase() + curGood.category.slice(1)} aggiunto` })
           }
         ).catch(
           (err) => {
@@ -83,8 +93,8 @@ function Home() {
           "quantity": 0,
           "items": [
             {
-              "itemsPerPackage": 0,
-              "barcode": barcode,
+              "itemsPerPackage": 1,
+              "barcode": barcode.current,
             }
           ]
         });
@@ -96,26 +106,23 @@ function Home() {
   function removeItem(barcode) {
     axios.get(catalogBaseUrl.concat(barcode)).then(
       (response) => {
-        setGood(response.data);
+        const curGood = response.data;
         if (response.data.quantity < response.data.items[0].itemsPerPackage) {
-          message = 'Operazione annullata per giacenza negativa';
-          setShowErrorMessage(true);
+          setMessage({ type: 'e', text: 'Operazione annullata per giacenza negativa' })
         }
         const deltaValue = -1 * response.data.items[0].itemsPerPackage;
         axios.put(storageBaseUrl.concat(response.data._id), {
           "delta": deltaValue
         }).then(
           () => {
-            message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} rimosso`;
-            setShowSuccessMessage(true);
+            setMessage({ type: 's', text: `${curGood.category.charAt(0).toUpperCase() + curGood.category.slice(1)} rimosso` })
           }
         ).catch((err) => { console.error(err) });
       }
     ).catch(
       (err) => {
         console.error(err)
-        message = `Articolo non trovato`;
-        setShowErrorMessage(true);
+        setMessage({ type: 'e', text: 'Articolo non trovato' })
       }
     )
   }
@@ -137,8 +144,7 @@ function Home() {
                 "barcode": good.items[0].barcode
               }).then(
                 () => {
-                  message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto`;
-                  setShowSuccessMessage(true);
+                  setMessage({ type: 's', text: `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto` })
                 }
               ).catch((err) => { console.error(err) });
             }
@@ -156,8 +162,7 @@ function Home() {
                 "delta": good.items[0].itemsPerPackage
               }).then(
                 () => {
-                  message = `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto`;
-                  setShowSuccessMessage(true);
+                  setMessage({ type: 's', text: `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto` })
                 }
               ).catch((err) => { console.log(err) });
             }
@@ -179,10 +184,10 @@ function Home() {
       newGood.items[0] = { ...newItems[0], itemsPerPackage: changedProp.itemsPerPackage };
       setGood(newGood);
     } else {
-      setGood(good => {
+      setGood((good => {
         // Object.assign would also work
         return { ...good, ...changedProp };
-      })
+      }));
     }
   }
 
@@ -204,17 +209,17 @@ function Home() {
         <BarcodeScanner onScan={handleScan} enableScanner={isScanning} />
       </div>
       <div hidden={!isCreating}>
-        <CreateTemplate barcode={barcode} good={good} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
+        <CreateTemplate barcode={barcode.current} good={good} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
       </div>
       <div>
         <Snackbar open={showSuccessMessage} autoHideDuration={2000} onClose={() => { setShowSuccessMessage(false) }}>
           <Alert onClose={() => { setShowSuccessMessage(false) }} severity="success">
-            {message}
+            {message.text}
           </Alert>
         </Snackbar>
         <Snackbar open={showErrorMessage} autoHideDuration={2000} onClose={() => { setShowErrorMessage(false) }}>
           <Alert onClose={() => { setShowErrorMessage(false) }} severity="error">
-            {message}
+            {message.text}
           </Alert>
         </Snackbar>
       </div>
