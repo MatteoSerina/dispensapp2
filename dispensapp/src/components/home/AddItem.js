@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
@@ -28,17 +29,19 @@ const AddItem = (props) => {
 
     return (
         <Card onClick={() => props.onClick()} className={classes.card}>
-            <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                p={1}
-                m={1}
-                className={classes.box}>
-                <CardContent className={classes.cardContent}>
-                    <AddIcon className={classes.icon} />
-                </CardContent>
-            </Box>
+            <CardActionArea>
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    p={1}
+                    m={1}
+                    className={classes.box}>
+                    <CardContent className={classes.cardContent}>
+                        <AddIcon className={classes.icon} />
+                    </CardContent>
+                </Box>
+            </CardActionArea>
         </Card>
     );
 }
