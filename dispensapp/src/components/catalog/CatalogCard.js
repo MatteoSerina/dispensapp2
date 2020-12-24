@@ -117,7 +117,7 @@ const CatalogCard = (props) => {
             <TextField required fullWidth label="Barcode" name="barcode" type="number" value={barcode || ''} onChange={handleChange} />
           </Typography>
           <Typography variant="body2" component="p">
-            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 1} InputProps={{ inputProps: { min: 0 } }} onChange={handleChange} />
+            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 1} InputProps={{ inputProps: { min: 1 } }} onChange={handleChange} />
           </Typography>
           <CardActions>
             <Grid container spacing={2}>
