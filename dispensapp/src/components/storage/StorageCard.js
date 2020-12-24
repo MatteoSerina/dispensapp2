@@ -9,13 +9,15 @@ import EditGood from './EditGood';
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
-    minHeight: 10,
-    marginBottom: '1em',
     marginLeft: '1em',
     marginRight: '1em',
   },
   editGood: {
     marginBottom: '2em',
+  },
+  content: {
+    padding: "0 !important",
+    paddingBottom: "0 !important",
   }
 });
 
@@ -34,7 +36,7 @@ const StorageCard = (props) => {
   return (
     <div>
       <Card className={classes.root} variant="outlined" onClick={() => { setIsEditing(!isEditing) }}>
-        <CardContent>
+        <CardContent className={classes.content}>
           <Box display="flex" p={1}>
             <Box p={1} flexGrow={1}>
               <Typography variant="h5">
@@ -49,7 +51,7 @@ const StorageCard = (props) => {
           </Box>
         </CardContent>
       </Card>
-      <div style={{marginBottom: '2em', borderLeft: '1px', borderRight: '1px'}}>
+      <div style={{marginTop: '0.5em', marginBottom: '2em', borderLeft: '1px', borderRight: '1px'}}>
       <EditGood good={props.good} onUpdate={handleUpdate} enabled={isEditing} editComplete={handleEdit}/>
       </div>
     </div>

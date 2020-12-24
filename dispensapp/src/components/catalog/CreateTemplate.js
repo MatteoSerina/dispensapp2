@@ -24,7 +24,7 @@ const CreateTemplate = (props) => {
           <TextField className={classes.barcodeInput} name="barcode" label="Barcode" variant="outlined" fullWidth onChange={handleChange} value={props.barcode} />
         </Grid> */}
         <Grid item xs={12}>
-          <CatalogCard item={props.good} onChange={props.onChange} onSave={props.onSave} onCancel={props.onCancel} isCreate />
+          <CatalogCard barcode={props.barcode} item={props.good} onChange={props.onChange} onSave={props.onSave} onCancel={props.onCancel} isCreate />
         </Grid>
       </Grid>
     </div>
