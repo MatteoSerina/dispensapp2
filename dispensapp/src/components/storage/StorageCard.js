@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardActionArea from '@material-ui/core/CardActionArea';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import EditGood from './EditGood';
@@ -28,31 +29,33 @@ const StorageCard = (props) => {
   function handleUpdate(good) {
     props.onUpdate(good);
   }
-  
-  function handleEdit(){
+
+  function handleEdit() {
     setIsEditing(false);
   }
 
   return (
     <div>
       <Card className={classes.root} variant="outlined" onClick={() => { setIsEditing(!isEditing) }}>
-        <CardContent className={classes.content}>
-          <Box display="flex" p={1}>
-            <Box p={1} flexGrow={1}>
-              <Typography variant="h5">
-                {props.good.category.charAt(0).toUpperCase() + props.good.category.slice(1)}
-              </Typography>
+        <CardActionArea>
+          <CardContent className={classes.content}>
+            <Box display="flex" p={1}>
+              <Box p={1} flexGrow={1}>
+                <Typography variant="h5">
+                  {props.good.category.charAt(0).toUpperCase() + props.good.category.slice(1)}
+                </Typography>
+              </Box>
+              <Box p={1}>
+                <Typography variant="h5" color={props.good.quantity < 1 ? "error" : "primary"}>
+                  {props.good.quantity}
+                </Typography>
+              </Box>
             </Box>
-            <Box p={1}>
-              <Typography variant="h5" color={props.good.quantity < 1 ? "error" : "primary"}>
-                {props.good.quantity}
-              </Typography>
-            </Box>
-          </Box>
-        </CardContent>
+          </CardContent>
+        </CardActionArea>
       </Card>
-      <div style={{marginTop: '0.5em', marginBottom: '2em', borderLeft: '1px', borderRight: '1px'}}>
-      <EditGood good={props.good} onUpdate={handleUpdate} enabled={isEditing} editComplete={handleEdit}/>
+      <div style={{ marginTop: '0.5em', marginBottom: '2em', borderLeft: '1px', borderRight: '1px' }}>
+        <EditGood good={props.good} onUpdate={handleUpdate} enabled={isEditing} editComplete={handleEdit} />
       </div>
     </div>
   );
