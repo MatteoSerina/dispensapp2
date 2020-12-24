@@ -15,7 +15,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div style={{marginTop: '5em'}}>
       <Navbar toggleDrawer={toggleDrawer} />
       <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
     </div>

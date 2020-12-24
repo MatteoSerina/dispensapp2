@@ -12,13 +12,13 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-  },
+  }
 }));
 
 const Navbar = (props) => {
   const classes = useStyles(); 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Toolbar>
         <IconButton
           onClick={props.toggleDrawer(true)}
