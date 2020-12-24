@@ -50,6 +50,7 @@ const CatalogCard = (props) => {
   const classes = useStyles();
   var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item !== undefined && props.item !== null && props.item.items !== undefined) ? props.item.items[0] : {} || {};
   var { category = '' } = props.item || {};
+  //console.log(props.item.items[0])
 
   const [categories, setCategories] = useState([]);
   useEffect(() => {
@@ -115,7 +116,7 @@ const CatalogCard = (props) => {
           <Typography className={classes.pos} color="textSecondary">
             <TextField required fullWidth label="Barcode" name="barcode" type="number" value={barcode || ''} onChange={handleChange} />
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" component="p">
             <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 1} InputProps={{ inputProps: { min: 1 } }} onChange={handleChange} />
           </Typography>
           <CardActions>

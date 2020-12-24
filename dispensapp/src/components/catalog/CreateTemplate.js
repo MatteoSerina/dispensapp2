@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CatalogCard from './CatalogCard';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
     marginTop: '2em',
     marginLeft: '1em',
@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateTemplate = (props) => {
   const classes = useStyles();
-  
 
   return (
     <div>
