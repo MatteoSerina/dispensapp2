@@ -6,6 +6,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import { Button, CardActions, Grid } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import * as config from '../../config';
@@ -50,7 +51,7 @@ const CatalogCard = (props) => {
   const classes = useStyles();
   var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item !== undefined && props.item !== null && props.item.items !== undefined) ? props.item.items[0] : {} || {};
   var { category = '' } = props.item || {};
-  if (barcode === ''){
+  if (barcode === '') {
     barcode = props.barcode;
   }
 
@@ -137,11 +138,13 @@ const CatalogCard = (props) => {
             </Grid>
           </CardActions>
           <div hidden={!imageUrl}>
-            <CardMedia
-              className={classes.media}
-              image={imageUrl}
-              title="Foto articolo"
-            />
+            <Paper style={{ maxHeight: '30vmax', overflowY: 'scroll' }}>
+              <CardMedia
+                className={classes.media}
+                image={imageUrl}
+                title="Foto articolo"
+              />
+            </Paper>
           </div>
         </CardContent>
       </Card>

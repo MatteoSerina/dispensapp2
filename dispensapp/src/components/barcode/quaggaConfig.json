@@ -26,17 +26,7 @@
       "ean_reader",
       "ean_8_reader"
     ],
-    "locate": false,
-    "singleChannel": false,
-    "multiple": false,
-    "showFrequency": true,
-    "drawScanline": true,
-    "showPattern": true
+    "locate": false
   },
-  "locate": false,
-  "singleChannel": false,
-  "multiple": false,
-  "showFrequency": true,
-  "drawScanline": true,
-  "showPattern": true
+  "locate": false
 }

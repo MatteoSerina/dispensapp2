@@ -5,7 +5,7 @@ import { Box } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     categoryInput: {
-        height: '4em',
+        height: '2em',
     }
 }));
 

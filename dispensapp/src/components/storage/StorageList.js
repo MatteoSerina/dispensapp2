@@ -1,6 +1,4 @@
 import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import Paper from '@material-ui/core/Paper';
 import StorageCard from './StorageCard';
 
@@ -23,7 +21,7 @@ const StorageList = (props) => {
   })
   return (
     <div>
-      <Paper style={{ maxHeight: '80vmax', overflow: 'auto' }}>      
+      <Paper style={{ maxHeight: '70vmax', overflowY: 'scroll' }}>      
         {items}      
       </Paper>
     </div>
