@@ -5,5 +5,6 @@ module.exports = {
     port: process.env.PORT,
     mongoUrl: process.env.MONGO_URL,
     googleCx: process.env.GOOGLE_CX,
-    googleApiKey: process.env.GOOGLE_API_KEY
+    googleApiKey: process.env.GOOGLE_API_KEY,
+    domain: process.env.DOMAIN
 }
