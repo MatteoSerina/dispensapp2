@@ -15,18 +15,26 @@
       }
     }
   },
-  "locator": {
-    "patchSize": "medium",
-    "halfSample": true
-  },
+  "locate": true,
   "numOfWorkers": 0,
-  "frequency": 10,
+  "frequency":  10,
   "decoder": {
+    "drawBoundingBox": true,
+    "drawScanline": true,
+    "showPattern": true,
     "readers": [
       "ean_reader",
       "ean_8_reader"
-    ],
-    "locate": false
+    ]
   },
-  "locate": false
+  "locator": {
+    "patchSize": "large",
+    "halfSample": true
+  },
+  "area": { 
+    "top": "20%",  
+    "right": "10%", 
+    "left": "10%",  
+    "bottom": "20%"
+  }
 }

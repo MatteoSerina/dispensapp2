@@ -51,8 +51,8 @@ function Home() {
 
   function movementSelector(mov) {
     movement.current = mov;
-    //setIsScanning(true);
-    handleScan('987654145')
+    setIsScanning(true);
+    //handleScan('987654145')
   }
 
   function handleScan(bc) {
