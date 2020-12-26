@@ -5,7 +5,6 @@ import config from './quaggaConfig.json';
 const BarcodeScanner = (props) => {
 
     function handleScan(data) {
-        console.log(data)
         if (data.codeResult === undefined) { return; }
         if (isValid(data)) {
             Quagga.offDetected();
@@ -32,8 +31,6 @@ const BarcodeScanner = (props) => {
         const errors = result.codeResult.decodedCodes
             .filter(_ => _.error !== undefined)
             .map(_ => _.error);
-
-        document.write(errors)
 
         const median = getMedian(errors);
 
