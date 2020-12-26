@@ -52,7 +52,7 @@ function Home() {
   function movementSelector(mov) {
     movement.current = mov;
     setIsScanning(true);
-    //handleScan('987654')
+    //handleScan('987654145')
   }
 
   function handleScan(bc) {
@@ -141,10 +141,10 @@ function Home() {
               //Agguingi item
               axios.post(catalogBaseUrl.concat(escape(good.category)), {
                 "itemsPerPackage": good.items[0].itemsPerPackage,
-                "barcode": good.items[0].barcode
+                "barcode": good.items[0].barcode || barcode.current
               }).then(
                 () => {
-                  setMessage({ type: 's', text: `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} aggiunto` })
+                  setMessage({ type: 's', text: `${good.category.charAt(0).toUpperCase() + good.category.slice(1)} creato` })
                 }
               ).catch((err) => { console.error(err) });
             }
@@ -154,7 +154,7 @@ function Home() {
           const storedGood = response.data;
           axios.post(catalogBaseUrl.concat(escape(storedGood.category)), {
             "itemsPerPackage": good.items[0].itemsPerPackage,
-            "barcode": good.items[0].barcode
+            "barcode": good.items[0].barcode || barcode.current
           }).then(
             (response) => {
               //Incrementa quantità good
@@ -178,6 +178,7 @@ function Home() {
       let newItems = [...newGood.items];
       newGood.items[0] = { ...newItems[0], barcode: changedProp.barcode };
       setGood(newGood);
+      barcode.current = changedProp.barcode;
     } else if (changedProp.itemsPerPackage !== undefined) {
       let newGood = JSON.parse(JSON.stringify(good));
       let newItems = [...newGood.items];

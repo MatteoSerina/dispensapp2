@@ -5,15 +5,40 @@ import config from './quaggaConfig.json';
 const BarcodeScanner = (props) => {
 
     function handleScan(data) {
-        Quagga.offDetected();
-        Quagga.stop(); 
-        play();
-        props.onScan(data.codeResult.code);
-    }   
+        console.log(data)
+        if (data.codeResult === undefined) { return; }
+        if (isValid(data)) {
+            Quagga.offDetected();
+            Quagga.stop();
+            play();
+            console.log(data.codeResult);
+            props.onScan(data.codeResult.code);
+        } else {
+            console.log(`Barcode ${data.codeResult.code} not valid`);
+        }
+    }
 
     let beep = new Audio("/beep.mp3");
     function play() {
         beep.play();
+    }
+
+    function getMedian(arr) {
+        const mid = Math.floor(arr.length / 2),
+            nums = [...arr].sort((a, b) => a - b);
+        return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+    }
+    function isValid(result) {
+        const errors = result.codeResult.decodedCodes
+            .filter(_ => _.error !== undefined)
+            .map(_ => _.error);
+
+        document.write(errors)
+
+        const median = getMedian(errors);
+
+        //Good result for code_128 : median <= 0.08 and maxError < 0.1
+        return !(median > 0.08 || errors.some(err => err > 0.1))
     }
 
     useEffect(() => {
