@@ -35,7 +35,7 @@ const BarcodeScanner = (props) => {
         const median = getMedian(errors);
 
         //Good result for code_128 : median <= 0.08 and maxError < 0.1
-        return !(median > 0.08 || errors.some(err => err > 0.1))
+        return !(median > process.env.REACT_APP_BARCODE_MEDIAN_ERR || errors.some(err => err > process.env.REACT_APP_BARCODE_MAX_ERR))        
     }
 
     useEffect(() => {
