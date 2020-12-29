@@ -27,10 +27,9 @@ function Storage() {
   const classes = useStyles();
   const [filter, setFilter] = useState('');
   const [storage, setStorage] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   const fetchStorage = async () => {
-    setLoading(true);
     axios.get(storageBaseUrl).then(
       (response) => {
         setStorage(response.data);

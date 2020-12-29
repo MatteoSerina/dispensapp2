@@ -14,7 +14,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   appBar: {
-    height: '8.5vh'
+    height: '8.5vh',
+    flexDirection: 'row',
   }
 }));
 
