@@ -5,15 +5,19 @@ import RemoveItem from './RemoveItem';
 import BarcodeScanner from '../barcode/barcodeScanner';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import * as config from '../../config';
 import CreateTemplate from '../catalog/CreateTemplate';
 
 const useStyles = makeStyles({
   itemButton: {
-    marginTop: '5vh',
-    marginLeft: "10vh",
-    marginRight: "10vh",
+    // marginBottom: '5vh',
+  },
+  container: {
+    height: '80vh',
+    marginTop: '15vh'
   }
 });
 
@@ -199,12 +203,20 @@ function Home() {
   return (
     <div>
       <div hidden={isScanning || isCreating}>
-        <div className={classes.itemButton}>
-          <AddItem onClick={() => { movementSelector('add') }} />
-        </div>
-        <div className={classes.itemButton}>
-          <RemoveItem onClick={() => { movementSelector('remove') }} />
-        </div>
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          className={classes.container}
+        >
+          <Grid item xs={9}>
+            <AddItem onClick={() => { movementSelector('add') }} />
+          </Grid>
+          <Grid item xs={9}>
+            <RemoveItem onClick={() => { movementSelector('remove') }} />
+          </Grid>
+        </Grid>
       </div>
       <div hidden={!isScanning}>
         <BarcodeScanner onScan={handleScan} enableScanner={isScanning} />
