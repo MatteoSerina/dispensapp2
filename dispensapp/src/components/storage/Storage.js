@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import StorageList from './StorageList';
 import StorageFilter from './StorageFilter';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 import * as config from '../../config';
 
@@ -12,7 +14,11 @@ const useStyles = makeStyles((theme) => ({
   },
   list: {
     marginTop: '2em',
-  }
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 function Storage() {
@@ -21,10 +27,9 @@ function Storage() {
   const classes = useStyles();
   const [filter, setFilter] = useState('');
   const [storage, setStorage] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   const fetchStorage = async () => {
-    setLoading(true);
     axios.get(storageBaseUrl).then(
       (response) => {
         setStorage(response.data);
@@ -38,7 +43,7 @@ function Storage() {
     );
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     fetchStorage();
   }, []);
 
@@ -64,7 +69,7 @@ function Storage() {
       }
     ).catch(
       (err) => {
-        console.error(err);        
+        console.error(err);
         alert(err);
         setLoading(false);
       }
@@ -72,14 +77,19 @@ function Storage() {
 
   };
   return (
-    <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.container}>
-      <Grid item xs={12}>
-        <StorageFilter category={filter} onFilter={handleFilter} />
+    <div>
+      <Grid container direction="row" justify="flex-start" alignItems="flex-start" className={classes.container}>
+        <Grid item xs={12}>
+          <StorageFilter category={filter} onFilter={handleFilter} />
+        </Grid>
+        <Grid item xs={12} className={classes.list}>
+          <StorageList storage={storage} filter={filter} onUpdate={handleUpdate} />
+        </Grid>
       </Grid>
-      <Grid item xs={12} className={classes.list}>
-        <StorageList storage={storage} filter={filter} onUpdate={handleUpdate} />
-      </Grid>
-    </Grid>
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress color="inherit" variant='indeterminate' />
+      </Backdrop>
+    </div>
   );
 }
 

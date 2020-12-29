@@ -74,7 +74,7 @@ function Catalog() {
     }).then(
       (response) => {
         setLoading(false);
-        message = `Articolo aggiunto`;
+        message = `Articolo salvato`;
         setShowSuccessMessage(true);
       }
     ).catch(

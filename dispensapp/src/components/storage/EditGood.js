@@ -16,17 +16,20 @@ const useStyles = makeStyles({
 
 const EditGood = (props) => {
   const classes = useStyles();
-  
-  const[good, setGood] = useState(JSON.parse(JSON.stringify(props.good)));
+  const [quantity, setQuantity] = useState(props.good.quantity);
+  const [category, setCategory] = useState(props.good.category);
 
-  function handleChange(event) {
-    setGood(prevGood => ({
-      ...prevGood,
-      quantity: event.target.value
-    }))
+  function handleChangeQty(event) {
+    setQuantity(event.target.value);
   };
+  // function handleChangeCat(event) {
+  //   setCategory(event.target.value);
+  // };
 
   function handleSave() {
+    let good = JSON.parse(JSON.stringify(props.good));
+    good.quantity = quantity;
+    good.category = category;
     props.onUpdate(good);
     props.editComplete();
   }
@@ -39,10 +42,10 @@ const EditGood = (props) => {
     <form className={classes.root} noValidate autoComplete="off" hidden={!props.enabled}>
       <Grid container spacing={2}>
         {/* <Grid item xs={12}>
-          <TextField required inputProps={{ style: { textTransform: 'capitalize' } }} fullWidth label="Categoria" name="category" defaultValue={good.category} filled onChange={handleChange} />
+          <TextField required inputProps={{ style: { textTransform: 'capitalize' } }} fullWidth label="Categoria" name="category" value={category} onChange={handleChangeCat} />
         </Grid> */}
         <Grid item xs={12}>
-          <TextField required name="quantity" label="Quantità" type="number" fullWidth value={good.quantity} onChange={handleChange}
+          <TextField required name="quantity" label="Quantità" type="number" fullWidth value={quantity} onChange={handleChangeQty}
             InputLabelProps={{
               shrink: true,
             }}

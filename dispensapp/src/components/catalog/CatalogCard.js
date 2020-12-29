@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import { Button, CardActions, Grid } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import * as config from '../../config';
@@ -81,73 +82,75 @@ const CatalogCard = (props) => {
       <Typography variant="h3" component="h2" align="center" className={classes.notFound} hidden={props.item || !props.barcode}>
         Articolo non trovato
       </Typography>
-      <Card className={classes.root} hidden={!props.item}>
-        <CardContent>
-          <Typography className={classes.title} color="textSecondary" gutterBottom>
-            Articolo
+      <Box style={{ maxHeight: '80vh', overflowY: 'scroll' }}>
+        <Card className={classes.root} hidden={!props.item}>
+          <CardContent>
+            <Typography className={classes.title} color="textSecondary" gutterBottom>
+              Articolo
           </Typography>
-          <Typography variant="h5" component="h2">
-            {/* <TextField required fullWidth inputProps={{ style: { textTransform: 'capitalize' } }} label="Categoria" name="category" value={category} onChange={handleChange} /> */}
-            <Autocomplete
-              value={category}
-              onChange={(event, newValue) => {
-                handleChange(event);
-              }}
-              filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-                // Suggest the creation of a new value
-                if (params.inputValue !== '') {
-                  filtered.push(params.inputValue);
-                }
-                return filtered;
-              }}
-              selectOnFocus
-              clearOnBlur
-              handleHomeEndKeys
-              autoHighlight
-              autoSelect
-              id="category-autocomplete"
-              options={categories}
-              renderOption={(option) => option}
-              fullWidth
-              freeSolo
-              renderInput={(params) => (
-                <TextField {...params} required variant="standard" label="Categoria" name="category" />
-              )}
-            />
-          </Typography>
-          <Typography className={classes.pos} color="textSecondary">
-            <TextField required fullWidth label="Barcode" name="barcode" type="number" value={barcode || ''} onChange={handleChange} />
-          </Typography>
-          <Typography variant="body2" component="p">
-            <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 1} InputProps={{ inputProps: { min: 1 } }} onChange={handleChange} />
-          </Typography>
-          <CardActions>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={props.onSave}>Salva</Button>
-              </Grid>
-              <Grid item xs={6}>
-                <div hidden={props.isCreate}>
-                  <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={props.onDelete}>Elimina</Button>
-                </div>
-                <div hidden={!props.isCreate}>
-                  <Button fullWidth variant="contained" color="default" className={classes.action} onClick={props.onCancel}>Annulla</Button>
-                </div>
-              </Grid>
-            </Grid>
-          </CardActions>
-          <div hidden={!imageUrl}>
-            <Paper style={{ maxHeight: '30vmax', overflowY: 'scroll' }}>
-              <CardMedia
-                className={classes.media}
-                image={imageUrl}
-                title="Foto articolo"
+            <Typography variant="h5" component="h2">
+              {/* <TextField required fullWidth inputProps={{ style: { textTransform: 'capitalize' } }} label="Categoria" name="category" value={category} onChange={handleChange} /> */}
+              <Autocomplete
+                value={category}
+                onChange={(event, newValue) => {
+                  handleChange(event);
+                }}
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+                  // Suggest the creation of a new value
+                  if (params.inputValue !== '') {
+                    filtered.push(params.inputValue);
+                  }
+                  return filtered;
+                }}
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                autoHighlight
+                autoSelect
+                id="category-autocomplete"
+                options={categories}
+                renderOption={(option) => option}
+                fullWidth
+                freeSolo
+                renderInput={(params) => (
+                  <TextField {...params} required variant="standard" label="Categoria" name="category" />
+                )}
               />
-            </Paper>
-          </div>
-        </CardContent>
-      </Card>
+            </Typography>
+            <Typography className={classes.pos} color="textSecondary">
+              <TextField required fullWidth label="Barcode" name="barcode" type="number" value={barcode || ''} onChange={handleChange} />
+            </Typography>
+            <Typography variant="body2" component="p">
+              <TextField required fullWidth label="Pacco da" name="itemsPerPackage" type="number" value={itemsPerPackage || 1} InputProps={{ inputProps: { min: 1 } }} onChange={handleChange} />
+            </Typography>
+            <CardActions>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Button fullWidth variant="contained" color="primary" className={classes.action} onClick={props.onSave}>Salva</Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <div hidden={props.isCreate}>
+                    <Button fullWidth variant="contained" color="secondary" className={classes.action} onClick={props.onDelete}>Elimina</Button>
+                  </div>
+                  <div hidden={!props.isCreate}>
+                    <Button fullWidth variant="contained" color="default" className={classes.action} onClick={props.onCancel}>Annulla</Button>
+                  </div>
+                </Grid>
+              </Grid>
+            </CardActions>
+            <div hidden={!imageUrl}>
+              <Paper >
+                <CardMedia
+                  className={classes.media}
+                  image={imageUrl}
+                  title="Foto articolo"
+                />
+              </Paper>
+            </div>
+          </CardContent>
+        </Card>
+      </Box>
     </div>
   );
 }
