@@ -39,8 +39,8 @@ const errorHandler = error => {
 };
 
 // const server = http.createServer(app);
-const privateKeyPath = `/etc/letsencrypt/live/${config.domain}/privkey.pem`;
-const certificatePath = `/etc/letsencrypt/live/${config.domain}/cert.pem`;
+const privateKeyPath = config.domain ? `/etc/letsencrypt/live/${config.domain}/privkey.pem` : './server.key';
+const certificatePath = config.domain ? `/etc/letsencrypt/live/${config.domain}/cert.pem` : './server.cert';
 const server = https.createServer({
     key: fs.readFileSync(privateKeyPath),
     cert: fs.readFileSync(certificatePath)
