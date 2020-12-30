@@ -1,23 +1,21 @@
 const Good = require('../models/good');
 const Item = require('../models/item');
-const imageSearch = require('image-search-google');
-const config = require('../config');
 
-const client = new imageSearch(config.googleCx, config.googleApiKey);
-const options = { num: 1, searchType: 'image', };
+const goodsDataFetcher = require('../services/goodsDataFetcher');
+
 
 async function addImageUrl(item) {
-    const images = await client.search(item.barcode, options);
-    item.imageUrl = images[0].url;
+    const itemData = await goodsDataFetcher.getGoodsData(item.barcode);
+    item.imageUrl = itemData.imageUrl;
     return item;
 }
 
 exports.addItem = (req, res, next) => {
-    client.search(req.body.barcode.toLowerCase(), options).then(
-        (images) => {
+    goodsDataFetcher.getGoodsData(req.body.barcode.toLowerCase()).then(
+        (itemData) => {
             let imageUrl;
             try {
-                imageUrl = images[0].url;
+                imageUrl = itemData.imageUrl;
             } catch (error) {
                 imageUrl = null;
             }
@@ -84,13 +82,13 @@ exports.getGoodByBarcode = (req, res, next) => {
 }
 
 exports.updateItem = (req, res, next) => {
-    client.search(req.body.barcode.toLowerCase(), options).then(
-        (images) => {
+    goodsDataFetcher.getGoodsData(req.body.barcode.toLowerCase()).then(
+        (itemData) => {
             Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase() }, {
                 '$set': {
                     'items.$.barcode': req.body.barcode.toLowerCase(),
                     'items.$.itemsPerPackage': req.body.itemsPerPackage,
-                    'items.$.imageUrl': images[0].url
+                    'items.$.imageUrl': itemData.imageUrl
                 }
             }, function (err, post) {
                 if (err) {
