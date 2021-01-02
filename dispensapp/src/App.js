@@ -4,10 +4,13 @@ import React, { useState } from 'react';
 import DrawerMenu from './components/drawerMenu/DrawerMenu';
 import Navbar from './components/navbar/Navbar';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import LogIn from 'components/user/LogIn';
+import { Grid } from '@material-ui/core';
 
 
 function App() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [token, setToken] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -19,8 +22,15 @@ function App() {
   return (
     <div style={{ marginTop: '8.5vh' }}>
       <CssBaseline />
-      <Navbar toggleDrawer={toggleDrawer} />
-      <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
+      <Navbar toggleDrawer={toggleDrawer} loggedIn={token} isLoggedIn={setToken}/>
+      {token && (
+        <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} loggedIn={token} />
+      )}
+      {!token && (
+        <Grid container justify="center">
+          <LogIn setToken={setToken}/>
+        </Grid>
+      )}
     </div>
   );
 }

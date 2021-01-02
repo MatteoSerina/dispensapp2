@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { AppBar, IconButton, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, IconButton, Toolbar, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles((theme) => ({
@@ -15,12 +15,14 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     height: '8.5vh',
-    flexDirection: 'row',
+  },
+  button: {
+
   }
 }));
 
 const Navbar = (props) => {
-  const classes = useStyles(); 
+  const classes = useStyles();
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
@@ -32,6 +34,13 @@ const Navbar = (props) => {
         <Typography variant="h6" className={classes.title}>
           DispensApp
         </Typography>
+        {props.loggedIn && (
+          <Button color="inherit" size="large" className={classes.button} onClick={() => props.isLoggedIn(false)}>
+            <Typography variant="button">
+              Logout
+            </Typography>
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   );
