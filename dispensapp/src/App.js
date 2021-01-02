@@ -3,6 +3,7 @@ import 'fontsource-roboto';
 import React, { useState } from 'react';
 import DrawerMenu from './components/drawerMenu/DrawerMenu';
 import Navbar from './components/navbar/Navbar';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
   };
 
   return (
-    <div style={{marginTop: '8.5vh'}}>
+    <div style={{ marginTop: '8.5vh' }}>
+      <CssBaseline />
       <Navbar toggleDrawer={toggleDrawer} />
       <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
     </div>

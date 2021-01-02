@@ -5,7 +5,6 @@ import RemoveItem from './RemoveItem';
 import BarcodeScanner from '../barcode/barcodeScanner';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import * as config from '../../config';
@@ -141,7 +140,7 @@ function Home() {
             "category": good.category,
             "quantity": good.items[0].itemsPerPackage,
           }).then(
-            (response) => {
+            () => {
               //Agguingi item
               axios.post(catalogBaseUrl.concat(escape(good.category)), {
                 "itemsPerPackage": good.items[0].itemsPerPackage,
@@ -160,7 +159,7 @@ function Home() {
             "itemsPerPackage": good.items[0].itemsPerPackage,
             "barcode": good.items[0].barcode || barcode.current
           }).then(
-            (response) => {
+            () => {
               //Incrementa quantità good
               axios.put(storageBaseUrl.concat(storedGood._id), {
                 "delta": good.items[0].itemsPerPackage
