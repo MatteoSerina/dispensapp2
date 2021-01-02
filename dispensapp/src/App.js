@@ -1,4 +1,5 @@
 import './App.css';
+import 'fontsource-roboto';
 import React, { useState } from 'react';
 import DrawerMenu from './components/drawerMenu/DrawerMenu';
 import Navbar from './components/navbar/Navbar';
