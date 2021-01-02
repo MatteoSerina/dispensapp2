@@ -9,3 +9,7 @@ export function catalogBaseUrl(backendBaseUrl) {
 export function categoriesBaseUrl(backendBaseUrl) {
     return backendBaseUrl.concat('/api/categories/');
 }
+
+export function apiVersionBaseUrl(backendBaseUrl) {
+    return backendBaseUrl.concat('/api/version/');
+}
