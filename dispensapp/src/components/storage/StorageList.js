@@ -21,8 +21,8 @@ const StorageList = (props) => {
   })
   return (
     <div>
-      <Paper style={{ maxHeight: '70vmax', overflowY: 'scroll' }}>      
-        {items}      
+      <Paper elevation={0} style={{ height: '80vh', overflowY: 'scroll' }}>
+        {items}
       </Paper>
     </div>
   );
