@@ -9,6 +9,7 @@ const catalogRoutes = require('./routes/catalog');
 const storageRoutes = require('./routes/storage');
 const categoryRoutes = require('./routes/categories');
 const apiVersionRoutes = require('./routes/apiVersion');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -35,5 +36,6 @@ app.use('/api/catalog', catalogRoutes);
 app.use('/api/storage', storageRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/version', apiVersionRoutes);
+app.use('/api/user', userRoutes);
 
 module.exports = app;
