@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import axios from 'axios';
+import * as config from '../../config';
+
+const userBaseUrl = config.userBaseUrl(process.env.REACT_APP_API_URL);
 
 function Copyright() {
   return (
@@ -47,33 +51,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 async function loginUser(credentials) {
-    console.log(credentials);
-    return 'alkjkljhwiuhcbasdjhgwkn';
-    // return fetch('http://localhost:8080/login', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(credentials)
-    // })
-    //   .then(data => data.json())
-   }
+  console.log(credentials);
+  return axios.post(userBaseUrl.concat('login'), {
+    "email": credentials.email,
+    "password": credentials.password
+  }).then(
+    (res) => { return res }
+  ).catch(
+    (err) => { console.log(err); return null }
+  )
+}
 
 const LogIn = (props) => {
   const classes = useStyles();
 
-  const [username, setUserName] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log(username);
-    console.log(password);
-    const token = await loginUser({
-      username,
+    const auth = await loginUser({
+      email,
       password
     });
-    props.setToken(token);
+    if (auth) {
+      props.setAuth(auth.data);
+    }
   }
 
   return (
@@ -97,7 +100,7 @@ const LogIn = (props) => {
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={e => setUserName(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
           />
           <TextField
             variant="outlined"

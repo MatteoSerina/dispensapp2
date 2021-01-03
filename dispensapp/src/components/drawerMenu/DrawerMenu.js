@@ -21,6 +21,9 @@ import Catalog from '../catalog/Catalog';
 
 const DrawerMenu = (props) => {
     const apiVersionBaseUrl = config.apiVersionBaseUrl(process.env.REACT_APP_API_URL);
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${props.auth.token}` }
+    const auth = props.auth;
+
     const [apiVersion, setApiVersion] = useState('');
     useEffect(() => {
         axios.get(apiVersionBaseUrl).then(
@@ -101,9 +104,25 @@ const DrawerMenu = (props) => {
                 </React.Fragment>
             </div>
             <div className="content">
-                <Route exact path="/" component={Home} />
-                <Route path="/catalog" component={Catalog} />
-                <Route path="/storage" component={Storage} />
+                <Route
+                    exact path='/'
+                    render={() => (
+                        <Home auth={auth} />
+                    )}
+                />
+                <Route
+                    path='/catalog'
+                    render={() => (
+                        <Catalog auth={auth} />
+                    )}
+                />
+                <Route
+                    path='/storage'
+                    render={() => (
+                        <Storage auth={auth} />
+                    )}
+                />
+                
             </div>
         </HashRouter>
     );

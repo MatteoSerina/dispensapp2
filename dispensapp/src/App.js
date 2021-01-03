@@ -10,7 +10,7 @@ import { Grid } from '@material-ui/core';
 
 function App() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [token, setToken] = useState(false);
+  const [auth, setAuth] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -22,13 +22,13 @@ function App() {
   return (
     <div style={{ marginTop: '8.5vh' }}>
       <CssBaseline />
-      <Navbar toggleDrawer={toggleDrawer} loggedIn={token} isLoggedIn={setToken}/>
-      {token && (
-        <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} loggedIn={token} />
+      <Navbar toggleDrawer={toggleDrawer} loggedIn={auth} isLoggedIn={setAuth}/>
+      {auth && (
+        <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} auth={auth} />
       )}
-      {!token && (
+      {!auth && (
         <Grid container justify="center">
-          <LogIn setToken={setToken}/>
+          <LogIn setAuth={setAuth}/>
         </Grid>
       )}
     </div>

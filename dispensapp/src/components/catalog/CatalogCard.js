@@ -49,6 +49,8 @@ const filter = createFilterOptions();
 
 const CatalogCard = (props) => {
   const categoriesBaseUrl = config.categoriesBaseUrl(process.env.REACT_APP_API_URL);
+  axios.defaults.headers.common = {'Authorization': `Bearer ${props.auth.token}`}
+  
   const classes = useStyles();
   var { barcode = '', itemsPerPackage = '', imageUrl = '' } = (props.item !== undefined && props.item !== null && props.item.items !== undefined) ? props.item.items[0] : {} || {};
   var { category = '' } = props.item || {};

@@ -23,9 +23,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Catalog() {
+function Catalog(props) {
   const catalogBaseUrl = config.catalogBaseUrl(process.env.REACT_APP_API_URL);
-  
+  axios.defaults.headers.common = { 'Authorization': `Bearer ${props.auth.token}` }
+
   const classes = useStyles();
   const [isLoading, setLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -94,7 +95,7 @@ function Catalog() {
         setLoading(false);
         message = `Articolo eliminato`;
         setShowSuccessMessage(true);
-        setTimeout(() => { history.push('/'); }, 2000);                
+        setTimeout(() => { history.push('/'); }, 2000);
       }
     ).catch(
       (err) => {
@@ -113,7 +114,7 @@ function Catalog() {
           <CatalogFilter barcode={barcode} onFilter={handleFilter} />
         </Grid>
         <Grid item xs={12}>
-          <CatalogCard item={item} barcode={barcode} onChange={handleChange} onSave={handleSave} onDelete={handleDelete} />
+          <CatalogCard item={item} barcode={barcode} auth={props.auth} onChange={handleChange} onSave={handleSave} onDelete={handleDelete} />
         </Grid>
       </Grid>
       <div>
