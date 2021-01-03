@@ -9,6 +9,8 @@ import KitchenIcon from '@material-ui/icons/Kitchen';
 import HomeIcon from '@material-ui/icons/Home';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { Divider, List, ListItem, ListItemIcon, ListItemText, ListItemAvatar, Avatar, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { green} from '@material-ui/core/colors';
 import packageJson from '../../../package.json';
 import axios from 'axios';
 import * as config from '../../config';
@@ -19,10 +21,18 @@ import Home from '../home/Home';
 import Storage from '../storage/Storage';
 import Catalog from '../catalog/Catalog';
 
+const useStyles = makeStyles((theme) => ({    
+    green: {
+      color: '#fff',
+      backgroundColor: green[500],
+    },
+  }));
+
 const DrawerMenu = (props) => {
     const apiVersionBaseUrl = config.apiVersionBaseUrl(process.env.REACT_APP_API_URL);
     axios.defaults.headers.common = { 'Authorization': `Bearer ${props.auth.token}` }
-    const auth = props.auth;
+
+    const classes = useStyles();
 
     const [apiVersion, setApiVersion] = useState('');
     useEffect(() => {
@@ -47,9 +57,9 @@ const DrawerMenu = (props) => {
                 <NavLink to="/" className='MenuItem'>
                     <ListItem button key='User'>
                         <ListItemAvatar>
-                            <Avatar alt="Utente" />
+                            <Avatar alt={props.auth.username} className={classes.green}>{props.auth.username.match(/\b(\w)/g).join('')}</Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary='Utente' />
+                        <ListItemText primary={props.auth.username} />
                     </ListItem>
                 </NavLink>
             </List>
@@ -107,22 +117,22 @@ const DrawerMenu = (props) => {
                 <Route
                     exact path='/'
                     render={() => (
-                        <Home auth={auth} />
+                        <Home auth={props.auth} />
                     )}
                 />
                 <Route
                     path='/catalog'
                     render={() => (
-                        <Catalog auth={auth} />
+                        <Catalog auth={props.auth} />
                     )}
                 />
                 <Route
                     path='/storage'
                     render={() => (
-                        <Storage auth={auth} />
+                        <Storage auth={props.auth} />
                     )}
                 />
-                
+
             </div>
         </HashRouter>
     );
