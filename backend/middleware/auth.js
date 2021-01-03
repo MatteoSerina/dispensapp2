@@ -6,13 +6,14 @@ module.exports = (req, res, next) => {
         const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
         // @ts-ignore
         const userId = decodedToken.userId;
-        if (req.body.userId && req.body.userId != userId) {
+        if (req.body.userId && req.body.userId != userId) { //TODO: userId must be mandatory in the request
             throw 'Invalid UserID'
         }
+        res.locals.userId = userId;
         next();
     } catch {
         res.status(401).json({
-            error: new Error('Invalid request')
+            error: 'Unauthorized request'
         })
     }
 }

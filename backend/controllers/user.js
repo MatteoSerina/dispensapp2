@@ -33,14 +33,14 @@ exports.login = (req, res, next) => {
         (user) => {
             if (!user) {
                 return res.status(401).json({
-                    error: new Error('User not found!')
+                    error: 'User not found'
                 })
             }
             // @ts-ignore
             bcrypt.compare(req.body.password, user.password).then(
                 (valid) => {
                     if (!valid) {
-                        return res.status(401).json({ error: new Error('Incorrect password!') })
+                        return res.status(401).json({ error: 'Wrong password' })
                     }
                     const token = jwt.sign(
                         { userId: user._id },
