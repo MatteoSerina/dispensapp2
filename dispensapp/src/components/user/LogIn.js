@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from 'axios';
 import * as config from '../../config';
+import { Backdrop, Fade, Modal } from '@material-ui/core';
 
 const userBaseUrl = config.userBaseUrl(process.env.REACT_APP_API_URL);
 
@@ -48,6 +49,20 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalPaper: {
+    backgroundColor: theme.palette.background.paper,
+    borderStyle: 'solid',
+    borderColor: '#f50057',
+    borderWidth: '2px',
+    outline: 'none',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
 async function loginUser(credentials) {
@@ -67,6 +82,7 @@ const LogIn = (props) => {
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -75,8 +91,9 @@ const LogIn = (props) => {
       password
     });
     if (auth) {
-      props.setAuth(auth.data);
-    }
+      return props.setAuth(auth.data);
+    }    
+    setModalOpen(true);
   }
 
   return (
@@ -144,6 +161,25 @@ const LogIn = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classes.modal}
+        open={modalOpen}
+        onClose={() => { setModalOpen(false) }}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={modalOpen}>
+          <div className={classes.modalPaper}>
+            <h2 id="transition-modal-title">Credenziali errate</h2>
+            <p id="transition-modal-description">Controlla email e password</p>
+          </div>
+        </Fade>
+      </Modal>
     </Container>
   );
 }
