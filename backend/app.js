@@ -12,6 +12,7 @@ const apiVersionRoutes = require('./routes/apiVersion');
 const userRoutes = require('./routes/user');
 
 const app = express();
+console.log(`Running DispensApp API v.${require("./package.json").version}`);
 
 mongoose.set('useFindAndModify', false);
 mongoose.connect(config.mongoUrl)
