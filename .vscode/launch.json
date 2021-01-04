@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${file}",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/backend/.env"
         },
         {
             "type": "chrome",

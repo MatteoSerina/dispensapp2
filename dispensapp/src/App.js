@@ -5,6 +5,7 @@ import DrawerMenu from './components/drawerMenu/DrawerMenu';
 import Navbar from './components/navbar/Navbar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LogIn from 'components/user/LogIn';
+import SignUp from 'components/user/SignUp';
 import { Grid } from '@material-ui/core';
 
 
@@ -22,15 +23,8 @@ function App() {
   return (
     <div style={{ marginTop: '8.5vh' }}>
       <CssBaseline />
-      <Navbar toggleDrawer={toggleDrawer} loggedIn={auth} isLoggedIn={setAuth}/>
-      {auth && (
-        <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} auth={auth} />
-      )}
-      {!auth && (
-        <Grid container justify="center">
-          <LogIn setAuth={setAuth}/>
-        </Grid>
-      )}
+      <Navbar toggleDrawer={toggleDrawer} loggedIn={auth} handleLogIn={setAuth} />
+      <DrawerMenu isDrawerOpen={isDrawerOpen} toggleDrawer={toggleDrawer} auth={auth} setAuth={setAuth} />
     </div>
   );
 }

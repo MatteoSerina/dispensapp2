@@ -63,10 +63,12 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  signupLink: {
+    justifyContent: 'center'
+  }
 }));
 
 async function loginUser(credentials) {
-  console.log(credentials);
   return axios.post(userBaseUrl.concat('login'), {
     "email": credentials.email,
     "password": credentials.password
@@ -92,95 +94,97 @@ const LogIn = (props) => {
     });
     if (auth) {
       return props.setAuth(auth.data);
-    }    
+    }
     setModalOpen(true);
   }
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Login
+    <Grid container justify="center">
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Login
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Indirizzo e-mail"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            onChange={e => setEmail(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={e => setPassword(e.target.value)}
-          />
-          {/* <FormControlLabel
+          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Indirizzo e-mail"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={e => setEmail(e.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={e => setPassword(e.target.value)}
+            />
+            {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           /> */}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Login
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Login
           </Button>
-          {/* <Grid container>
-            <Grid item xs>
+            <Grid container className={classes.signupLink}>
+            {/* <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
               </Link>
-            </Grid>
+            </Grid> */}
             <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link href="#signup" variant="body2">
+                {"Non hai un account? Sign up"}
               </Link>
             </Grid>
-          </Grid> */}
-        </form>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-      <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        className={classes.modal}
-        open={modalOpen}
-        onClose={() => { setModalOpen(false) }}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={modalOpen}>
-          <div className={classes.modalPaper}>
-            <h2 id="transition-modal-title">Credenziali errate</h2>
-            <p id="transition-modal-description">Controlla email e password</p>
-          </div>
-        </Fade>
-      </Modal>
-    </Container>
+          </Grid>
+          </form>
+        </div>
+        <Box mt={8}>
+          <Copyright />
+        </Box>
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          className={classes.modal}
+          open={modalOpen}
+          onClose={() => { setModalOpen(false) }}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500,
+          }}
+        >
+          <Fade in={modalOpen}>
+            <div className={classes.modalPaper}>
+              <h2 id="transition-modal-title">Credenziali errate</h2>
+              <p id="transition-modal-description">Controlla email e password</p>
+            </div>
+          </Fade>
+        </Modal>
+      </Container>
+    </Grid>
   );
 }
 

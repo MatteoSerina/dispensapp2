@@ -9,7 +9,8 @@ exports.signup = (req, res, next) => {
             const user = new User({
                 username: req.body.username,
                 email: req.body.email,
-                password: hash
+                password: hash,
+                createdAt: Date.now()
             });
             user.save().then(
                 () => {
