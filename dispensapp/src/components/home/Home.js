@@ -24,9 +24,10 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-function Home() {
+function Home(props) {
   const catalogBaseUrl = config.catalogBaseUrl(process.env.REACT_APP_API_URL);
   const storageBaseUrl = config.storageBaseUrl(process.env.REACT_APP_API_URL);
+  axios.defaults.headers.common = { 'Authorization': `Bearer ${props.auth.token}` }
 
   const classes = useStyles();
 
@@ -221,7 +222,7 @@ function Home() {
         <BarcodeScanner onScan={handleScan} enableScanner={isScanning} />
       </div>
       <div hidden={!isCreating}>
-        <CreateTemplate barcode={barcode.current} good={good} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
+        <CreateTemplate barcode={barcode.current} good={good} auth={props.auth} onSave={handleSaveNewItem} onCancel={handleAbortNewItem} onChange={handleNewItemChange} />
       </div>
       <div>
         <Snackbar open={showSuccessMessage} autoHideDuration={2000} onClose={() => { setShowSuccessMessage(false) }}>

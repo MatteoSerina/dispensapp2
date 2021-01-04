@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import {
     Route,
     NavLink,
-    HashRouter
+    HashRouter,
+    Redirect
 } from "react-router-dom";
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import KitchenIcon from '@material-ui/icons/Kitchen';
 import HomeIcon from '@material-ui/icons/Home';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { Divider, List, ListItem, ListItemIcon, ListItemText, ListItemAvatar, Avatar, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
 import packageJson from '../../../package.json';
 import axios from 'axios';
 import * as config from '../../config';
@@ -18,9 +21,22 @@ import './DrawerMenu.css';
 import Home from '../home/Home';
 import Storage from '../storage/Storage';
 import Catalog from '../catalog/Catalog';
+import SignUp from '../user/SignUp';
+import LogIn from '../user/LogIn';
+
+const useStyles = makeStyles((theme) => ({
+    green: {
+        color: '#fff',
+        backgroundColor: green[500],
+    },
+}));
 
 const DrawerMenu = (props) => {
     const apiVersionBaseUrl = config.apiVersionBaseUrl(process.env.REACT_APP_API_URL);
+    axios.defaults.headers.common = { 'Authorization': `Bearer ${props.auth.token}` }
+
+    const classes = useStyles();
+
     const [apiVersion, setApiVersion] = useState('');
     useEffect(() => {
         axios.get(apiVersionBaseUrl).then(
@@ -40,17 +56,21 @@ const DrawerMenu = (props) => {
             onClick={props.toggleDrawer(false)}
             onKeyDown={props.toggleDrawer(false)}
         >
-            <List>
-                <NavLink to="/" className='MenuItem'>
-                    <ListItem button key='User'>
-                        <ListItemAvatar>
-                            <Avatar alt="Utente" />
-                        </ListItemAvatar>
-                        <ListItemText primary='Utente' />
-                    </ListItem>
-                </NavLink>
-            </List>
-            <Divider />
+            {props.auth && (
+                <div>
+                    <List>
+                        <NavLink to="/" className='MenuItem'>
+                            <ListItem button key='User'>
+                                <ListItemAvatar>
+                                    <Avatar alt={props.auth.username} className={classes.green}>{props.auth.username.match(/\b(\w)/g).join('')}</Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={props.auth.username} />
+                            </ListItem>
+                        </NavLink>
+                    </List>
+                    <Divider />
+                </div>
+            )}
             <List>
                 <NavLink to="/" className='MenuItem'>
                     <ListItem button key='Home'>
@@ -101,9 +121,52 @@ const DrawerMenu = (props) => {
                 </React.Fragment>
             </div>
             <div className="content">
-                <Route exact path="/" component={Home} />
-                <Route path="/catalog" component={Catalog} />
-                <Route path="/storage" component={Storage} />
+                <Route
+                    exact path='/'
+                    render={(p) => (
+                        props.auth ? (
+                            <Home auth={props.auth} />
+                        ) : (
+                                <Redirect to={{ pathname: '/login', state: { from: p.location } }} />
+                            )
+                    )}
+                />
+                <Route
+                    exact path='/catalog'
+                    render={(p) => (
+                        props.auth ? (
+                            <Catalog auth={props.auth} />
+                        ) : (
+                                <Redirect to={{ pathname: '/login', state: { from: p.location } }} />
+                            )
+                    )}
+                />
+                <Route
+                    path='/storage'
+                    render={(p) => (
+                        props.auth ? (
+                            <Storage auth={props.auth} />
+                        ) : (
+                                <Redirect to={{ pathname: '/login', state: { from: p.location } }} />
+                            )
+                    )}
+                />
+                <Route
+                    path='/signup'
+                    render={() => (
+                        <SignUp auth={props.auth} />
+                    )}
+                />
+                <Route
+                    path='/login'
+                    render={(p) => (
+                        !props.auth ? (
+                            <LogIn auth={props.auth} setAuth={props.setAuth} />
+                        ) : (
+                                <Redirect to={{ pathname: '/', state: { from: p.location } }} />
+                            )
+                    )}
+                />
             </div>
         </HashRouter>
     );

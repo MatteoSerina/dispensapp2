@@ -24,7 +24,7 @@ exports.addItem = (req, res, next) => {
                 itemsPerPackage: req.body.itemsPerPackage,
                 imageUrl: imageUrl
             });
-            Good.findOne({ category: req.params.category }).then(
+            Good.findOne({ category: req.params.category, userId: res.locals.userId }).then(
                 (good) => {
                     good.items.push(item);
                     good.save().then(
@@ -63,7 +63,7 @@ exports.addItem = (req, res, next) => {
 
 
 exports.getGoodByBarcode = (req, res, next) => {
-    Good.findOne({ 'items.barcode': req.params.barcode.toLowerCase() }, "category quantity items.$:1")
+    Good.findOne({ 'items.barcode': req.params.barcode.toLowerCase(), userId: res.locals.userId }, "category quantity items.$:1")
         .then(
             (good) => {
                 if (good === null) {
@@ -84,7 +84,7 @@ exports.getGoodByBarcode = (req, res, next) => {
 exports.updateItem = (req, res, next) => {
     goodsDataFetcher.getGoodsData(req.body.barcode.toLowerCase()).then(
         (itemData) => {
-            Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase() }, {
+            Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase(), userId: res.locals.userId }, {
                 '$set': {
                     'items.$.barcode': req.body.barcode.toLowerCase(),
                     'items.$.itemsPerPackage': req.body.itemsPerPackage,
@@ -104,7 +104,7 @@ exports.updateItem = (req, res, next) => {
         }).catch((
             (err) => {
                 console.log(err);
-                Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase() }, {
+                Good.findOneAndUpdate({ 'items.barcode': req.params.barcode.toLowerCase(), userId: res.locals.userId }, {
                     '$set': {
                         'items.$.barcode': req.body.barcode.toLowerCase(),
                         'items.$.itemsPerPackage': req.body.itemsPerPackage,
@@ -126,7 +126,7 @@ exports.updateItem = (req, res, next) => {
 
 exports.deleteItem = (req, res, next) => {
     Good.findOneAndUpdate(
-        { 'items.barcode': req.params.barcode.toLowerCase() },
+        { 'items.barcode': req.params.barcode.toLowerCase(), userId: res.locals.userId },
         { $pull: { items: { barcode: req.params.barcode.toLowerCase() } } },
         { new: true },
         function (error) {

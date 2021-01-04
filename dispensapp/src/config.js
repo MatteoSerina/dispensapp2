@@ -13,3 +13,7 @@ export function categoriesBaseUrl(backendBaseUrl) {
 export function apiVersionBaseUrl(backendBaseUrl) {
     return backendBaseUrl.concat('/api/version/');
 }
+
+export function userBaseUrl(backendBaseUrl) {
+    return backendBaseUrl.concat('/api/user/');
+}

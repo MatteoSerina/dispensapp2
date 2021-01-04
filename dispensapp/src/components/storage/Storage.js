@@ -21,8 +21,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Storage() {
+function Storage(props) {
   const storageBaseUrl = config.storageBaseUrl(process.env.REACT_APP_API_URL);
+  axios.defaults.headers.common = { 'Authorization': `Bearer ${props.auth.token}` }
 
   const classes = useStyles();
   const [filter, setFilter] = useState('');

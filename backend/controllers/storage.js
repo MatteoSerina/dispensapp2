@@ -6,7 +6,8 @@ const fs = require('fs');
 exports.createGood = (req, res, next) => {
     const good = new Good({
         category: req.body.category.toLowerCase(),
-        quantity: req.body.quantity
+        quantity: req.body.quantity,
+        userId: res.locals.userId
     });
     good.save().then(
         () => {
@@ -39,6 +40,7 @@ exports.updateGood = (req, res, next) => {
                 _id: currentGood._id,                
                 category: currentGood.category.toLowerCase(),
                 quantity: newQuantity,
+                userId: currentGood.userId,
                 items: currentGood.items
             });            
             Good.updateOne({ category: currentGood.category.toLowerCase() }, good).then(
@@ -68,7 +70,7 @@ exports.updateGood = (req, res, next) => {
 
 // @ts-ignore
 exports.getGood = (req, res, next) => {
-    Good.findOne({ category: req.params.category.toLowerCase() })
+    Good.findOne({ category: req.params.category.toLowerCase(), userId: res.locals.userId })
         .then(
             (good) => {
                 res.status(200).json(good);
@@ -84,7 +86,7 @@ exports.getGood = (req, res, next) => {
 
 // @ts-ignore
 exports.deleteGood = (req, res, next) => {
-    Good.findOne({ category: req.params.category.toLowerCase() }).then(
+    Good.findOne({ category: req.params.category.toLowerCase(), userId: res.locals.userId }).then(
         (good) => {
             Good.deleteOne({ _id: good.id }).then(
                 (result) => {
@@ -108,7 +110,7 @@ exports.deleteGood = (req, res, next) => {
 
 // @ts-ignore
 exports.getAllGoods = (req, res, next) => {
-    Good.find().sort({quantity: 1, category: 1}).then(
+    Good.find({ userId: res.locals.userId }).sort({quantity: 1, category: 1}).then(
         (templates) => {
             res.status(200).json(templates);
         }
