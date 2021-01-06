@@ -2,7 +2,7 @@ const Good = require('../models/good');
 
 // @ts-ignore
 exports.getCategories = (req, res, next) => {
-    Good.distinct('category').then(
+    Good.find({ userId: res.locals.userId }).distinct('category').then(
         (categories) => {
             res.status(200).json(categories);
         }
